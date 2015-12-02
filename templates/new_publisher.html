@@ -1,0 +1,21 @@
+{% extends "base_user.html" %}
+{% block head %}
+<title>ICGDB - New Publisher</title>
+{% endblock %}
+{% block content %}
+<div id='content'>
+  <h2>New Publisher</h2>
+  <div style='margin-bottom:10px;'>
+    <form action="{{ url_for('newPublisher')}}" method='post' enctype='multipart/form-data'>
+    <h4><label for='publisher'>Genre:</label></h4>
+    <input type='text' size='32' name='name' maxlength='50'>
+    <input type='submit'  value='Create'></input>
+    <div class='descrip' style='margin-bottom: 15px'>
+    <label for='description'><h2>Publisher Description:</h2></label>
+    <textarea name='description' cols='100' rows='6' maxlength='500'></textarea>
+    </div>
+    </form>
+  </div>
+  
+</div>
+{% endblock %}

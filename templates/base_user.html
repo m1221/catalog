@@ -1,0 +1,46 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style_base.css') }}">
+  {% block head %}{% endblock %}
+</head>
+<body>
+<div id='header'></div>
+<div id='sub-header'>
+  <div id='text-header'><h1>ICGDB</h1><span id='sub'>Internet Computer Game Database</span></div>
+</div>
+<div id='body'>
+  <div id='bar-user'>
+    
+    <a href="{{ url_for('viewMain') }}"><div class='bar-item'>Home</div></a>
+    
+    
+    <div class='bar-item' id='games-drop'><a href="{{ url_for('viewGames') }}"><div>Games</div></a>
+    <a href="{{ url_for('newGame' )}}"><div class='nav-item'>New Game </div></a></div>
+    
+    
+    <div class='bar-item' id='genre-drop'><a href="{{ url_for('viewGenres')}}"><div>Genres</a></div>
+    <a href="{{ url_for('newGenre')}}"><div class='nav-item'>New Genre</div></a></div>
+    
+    <div class='bar-item' id='pub-drop' style='width:120px'><a href="{{ url_for('viewPublishers')}}"><div>Publishers</div></a>
+    <a href="{{ url_for('newPublisher')}}"><div class='nav-item' style='width:120px'>New Publisher</div></a></div>
+    
+
+    <div id='login'>Logged in as: {{ username }}<a href="{{ url_for('gdisconnect') }}">
+    <div id='logout'>Logout</div></a></div>
+  </div>
+  <div class='flash'>
+		{% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul>
+        {% for message in messages %}
+          <li> <strong> {{ message }} </strong> </li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+  </div>
+  {% block content %}{% endblock %}
+</div>
+</body>
+</html>

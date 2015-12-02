@@ -1,0 +1,19 @@
+{% if username %}
+{% extends "base_user.html" %}
+{% else %}
+{% extends "base.html" %}
+{% endif %}
+
+{% block head %}
+<title>ICGDB - Home</title>
+{% endblock %}
+{% block content %}
+<div id='content'>
+  <h2>Welcome!</h2>
+  <div class='top-box'>
+    <div><img class='pic' src="{{ url_for('static', filename='pics/main.jpg') }}" alt='oops! image failed to load'></div>
+  </div>
+  <h3>Lorem!!</h3>
+  <p>{{ game[0] }}</p>
+</div>
+{% endblock %}

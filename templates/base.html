@@ -1,0 +1,21 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style_base.css') }}">
+  {% block head %}{% endblock %}
+</head>
+<body>
+<div id='header'></div>
+<div id='sub-header'>
+  <div id='text-header'><h1>ICGDB</h1><span id='sub'>Internet Computer Game Database</span></div>
+</div>
+<div id='body'>
+  <div id='bar'>
+    <a href="{{ url_for('viewMain') }}"><div class='bar-item'>Home</div></a>
+    <a href="{{ url_for('viewGames') }}"><div class='bar-item'>Games</div></a>
+    <a href="{{ url_for('viewGenres')}}"><div class='bar-item'>Genres</div></a>
+    <a href="{{ url_for('viewPublishers')}}"><div class='bar-item'>Publishers</div></a>
+    <a href="{{ url_for('showLogin') }}"><div id='login'>Login</div></a>
+  </div>{% block content %}{% endblock %}</div>
+</body>
+</html>

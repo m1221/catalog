@@ -1,0 +1,86 @@
+{% if username %}
+{% extends "base_user.html" %}
+{% else %}
+{% extends "base.html" %}
+{% endif %}
+
+{% block head %}
+<title>ICGDB - View Genre</title>
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style_views.css') }}">
+{% endblock %}
+{% block content %}
+<div id='content'>
+  
+   <div style='margin-bottom: 15px;'>
+    <h2>Genre: {{ genre.name }}</h2>
+    <a href="{{ url_for('viewGenres') }}"><input type='button' value='Back'></a>
+    {% if username %}
+    <a href="{{ url_for('editGenre', genre_name=genre.name) }}"><input type='button' style='margin-left: 10px;' value='Edit Genre'></a>
+    <form action="#" method='post' enctype='multipart/form-data' style='display: inline;'>
+      <input style='margin-left: 10px;' type='submit' value='Delete Genre' name='button'>
+    </form>
+    {% endif %}
+  </div>
+  
+  <div class='descrip'>
+    <h2>Genre Description:</h2>
+    <p>{{ genre.description }}</p>
+  </div>
+  
+  <!-- Publisher Select Drop-down button-->
+  <span style='font-weight: 800;'> Show Publisher: </span>
+  <select id='pubSelect' onchange='showPublisher()'>
+    <option value="All">All</option>
+    {% for name in pub_names %}
+    <option value="{{ name }}">{{ name }}</option>
+    {% endfor %}
+  </select>
+  <div id='table'>
+    <div id='table-head'>
+      <div class='ti-name ti-head'>Name</div>
+      <div class='ti-release ti-head'>Release Date</div>
+      <div class='ti-genre ti-head'>Genre</div>
+      <div class='ti-publisher ti-head'>Publisher</div>
+      <div class='ti-rating ti-head'>Rating</div>
+      <div class='ti-mv ti-head'>Market Value</div>
+      <div class='ti-mv_date ti-head'>Market Value Date</div>
+    </div>
+    {% for i in games %}
+    <div id='table-row'> 
+    <div class="{{ i.genre_name }}"><span class="{{ i.publisher_name }}">
+      <div class='ti-name ti-body'><a href="{{ url_for('viewGamePage', game_name=i.name) }}">{{i.name}}</a></div>
+      <div class='ti-release ti-body'>{{i.release_date}}</div>
+      <div class='ti-genre ti-body'><a href="{{ url_for('viewGenrePage', genre_name=i.genre_name) }}">{{i.genre_name}}</div>
+      <div class='ti-publisher ti-body'><a href="{{ url_for('viewPubPage', pub_name=i.publisher_name) }}">{{ i.publisher_name }}</a></div>
+      <div class='ti-rating ti-body'>{{ i.rating }}</div>
+      <div class='ti-mv ti-body'>{{ i.market_value }}</div>
+      <div class='ti-mv_date ti-body'><div class='ti-mv-text'>{{ i.mv_date }}</div></div>
+    </span></div>
+    </div>
+    {% endfor %}
+</div>
+<script>
+  var pub_names = [];
+  {% for i in  pub_names -%}
+  pub_names.push('{{ i }}');
+  {% endfor -%}
+  
+  function showPublisher(){
+    var selection = document.getElementById("pubSelect").value;
+    console.log(selection);
+    for (i in pub_names){
+      x = document.getElementsByClassName(pub_names[i]);
+      for (j = 0; j < x.length; j++){
+        if (selection == x[j].className | selection + " off" == x[j].className){ 
+          x[j].className = pub_names[i];
+        } else if (selection == "All"){
+          x[j].className = pub_names[i];
+        } else{
+          x[j].className = pub_names[i] + " off";
+        }
+      }
+    }
+  }
+  
+</script>
+{% endblock %}
