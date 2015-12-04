@@ -108,14 +108,14 @@
       d.value='';
     }
     else{
-      var dSplit = d.value.split("-");
-      if (dSplit.length != 3 || dSplit[0].length != 4 || dSplit[1].length != 2 || dSplit[2].length != 2){
-        d.value='';
-      }
-      var dJoin = Number(dSplit.join(''));
-      console.log(dJoin);
-      if ( 0 < dJoin ){}
-      else {
+      var dSplit = d.value.split("-"); 
+      var first = dSplit[0], second = dSplit[1], third = dSplit[2];
+      
+      var firstTest = (first.length != 4) || (Number(first) < 1970 || Number(first) > 2020);
+      var secondTest = (second.length != 2) || (Number(second) < 1 || Number(second) > 12);
+      var thirdTest = (third.length != 2) || (Number(third) <1 || Number(third) > 31);
+      
+      if (firstTest || secondTest || thirdTest){
         d.value='';
       }
     }
