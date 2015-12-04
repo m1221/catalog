@@ -6,7 +6,7 @@
 <div id='content'>
   <form action="{{ url_for('newGame') }}" method='post' enctype='multipart/form-data'>
   <div style='margin-bottom: 15px;'>
-    <label for='name'></label><input type='text' size='25' name='name' maxlength='50'>
+    <label for='name'></label><input type='text' size='25' name='name' maxlength='50' required='required'>
     <h2 style='display: inline;'> - </h2>
     <input style='margin-left: 10px;' type='submit' value='Enter Game' name='enter'></input>
   </div>
