@@ -9,9 +9,9 @@
   <div style='margin-bottom: 15px;'>
     <label for='name'></label><input type='text' size='25' name='name' placeholder='{{ game.name }}' maxlength='50'>
     <h2 style='display: inline;'> - </h2>
-    <a href="{{ url_for('viewGamePage', game_name=game.name) }}"><input type='button' value='Back'></a>
-    <input style='margin-left: 10px;' type='submit' value='Save Changes' name='button'></input>
-    <input style='margin-left: 10px;' type='submit' value='Delete Game' name='button'></input>
+    <a href="{{ url_for('viewGamePage', game_name=game.name) }}"><input type='button' value='Back' class='back-button button'></a>
+    <input style='margin-left: 10px;' type='submit' value='Save Changes' name='button' class='go-button button'></input>
+    <input style='margin-left: 10px;' type='submit' value='Delete Game' name='button' class='delete-button button'></input>
     <h3>Game entered by: {{ game.user_email}}</h3>
   </div>
   

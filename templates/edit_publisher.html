@@ -14,9 +14,9 @@
     <div style='margin-bottom: 15px;'>
     <label for='name'></label><input type='text' size='25' name='name' placeholder='{{ publisher.name }}' maxlength='50'>
     <h2 style='display: inline;'> - </h2>
-    <a href="{{ url_for('viewPubPage', pub_name=publisher.name) }}"><input type='button' value='Back'></a>
-    <input style='margin-left: 10px;' type='submit' value='Save Changes' name='button'></input>
-    <input style='margin-left: 10px;' type='submit' value='Delete Publisher' name='button'></input>
+    <a href="{{ url_for('viewPubPage', pub_name=publisher.name) }}"><input type='button' value='Back' class='back-button button'></a>
+    <input style='margin-left: 10px;' type='submit' value='Save Changes' name='button' class='go-button button'></input>
+    <input style='margin-left: 10px;' type='submit' value='Delete Publisher' name='button' class='delete-button button'></input>
     <h3>Publisher entered by: {{ publisher.user_email}}</h3>
     </div>
 

@@ -13,11 +13,11 @@
   
    <div style='margin-bottom: 15px;'>
     <h2>Genre: {{ genre.name }}</h2>
-    <a href="{{ url_for('viewGenres') }}"><input type='button' value='Back'></a>
+    <a href="{{ url_for('viewGenres') }}"><input type='button' value='Back' class='back-button button'></a>
     {% if username %}
-    <a href="{{ url_for('editGenre', genre_name=genre.name) }}"><input type='button' style='margin-left: 10px;' value='Edit Genre'></a>
+    <a href="{{ url_for('editGenre', genre_name=genre.name) }}"><input type='button' style='margin-left: 10px;' value='Edit Genre' class='go-button button'></a>
     <form action="#" method='post' enctype='multipart/form-data' style='display: inline;'>
-      <input style='margin-left: 10px;' type='submit' value='Delete Genre' name='button'>
+      <input style='margin-left: 10px;' type='submit' value='Delete Genre' name='button' class='delete-button button'>
     </form>
     {% endif %}
   </div>

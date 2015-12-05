@@ -18,10 +18,6 @@ h1{
   font-size: 4em;
 }
 
-h2{
-  text-decoration: underline;
-}
-
 .pic{
   float: left;
   max-height: 380px;
@@ -141,13 +137,39 @@ h2{
 .box{
   display: flex;
 }
+
+.button{
+  background-color: #ccc;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius:6px;
+  color: #fff;
+  font-size: 1em;
+  text-decoration: none;
+  border:none;
+  cursor: pointer;
+}
+
 .cell{
   width: 200px;
 }
 
+.delete-button:hover{
+  background:#cc0000;
+}
+
+.back-button:hover{
+  background:#e4e600;
+}
+
+.go-button:hover{
+  background: #009933;
+}
+
 .descrip{
   display: block;
-  margin-bottom: 5px;
+  margin-top: 1em;
+  margin-bottom: 1em;
   min-height: 200px;
   min-width: 600px;
   border: 1px solid #a6a6a6;
