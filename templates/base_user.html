@@ -10,25 +10,46 @@
   <div id='text-header'><h1>ICGDB</h1><span id='sub'>Internet Computer Game Database</span></div>
 </div>
 <div id='body'>
-  <div id='bar-user'>
+  <div id='nav'>
+    <li>
+      <a href="{{ url_for('viewMain') }}">Home</a>
+    </li>
     
-    <a href="{{ url_for('viewMain') }}"><div class='bar-item'>Home</div></a>
+    <li>
+      <a href="{{ url_for('viewGames') }}">Games</a>
+      <ul>
+        <li>
+          <a href="{{ url_for('newGame' )}}">New Game</a>
+        </li>
+      </ul>
+    </li>
     
+    <li>
+      <a href="{{ url_for('viewGenres')}}">Genres</a>
+      <ul>
+        <li>
+          <a href="{{ url_for('newGenre')}}">New Genre</a>
+        </li>
+      </ul>
+    </li>
     
-    <div class='bar-item' id='games-drop'><a href="{{ url_for('viewGames') }}"><div>Games</div></a>
-    <a href="{{ url_for('newGame' )}}"><div class='nav-item'>New Game </div></a></div>
-    
-    
-    <div class='bar-item' id='genre-drop'><a href="{{ url_for('viewGenres')}}"><div>Genres</a></div>
-    <a href="{{ url_for('newGenre')}}"><div class='nav-item'>New Genre</div></a></div>
-    
-    <div class='bar-item' id='pub-drop' style='width:120px'><a href="{{ url_for('viewPublishers')}}"><div>Publishers</div></a>
-    <a href="{{ url_for('newPublisher')}}"><div class='nav-item' style='width:120px'>New Publisher</div></a></div>
-    
+    <li>
+      <a href="{{ url_for('viewPublishers')}}">Publishers</a>
+      <ul>
+        <a href="{{ url_for('newPublisher')}}">New Publisher</a>
+      </ul>
+    </li>
+ 
+    <li style='float: right; background-color: white;'>
+      <span id='login'>Logged in as: {{ username }}</span>
+      <ul>
+        <a id='logout' href="{{ url_for('gdisconnect') }}">Logout</a>
+      </ul>
+    </li>
 
-    <div id='login'>Logged in as: {{ username }}<a href="{{ url_for('gdisconnect') }}">
-    <div id='logout'>Logout</div></a></div>
+    
   </div>
+  <div id='line'>t</div>
   <div class='flash'>
 		{% with messages = get_flashed_messages() %}
       {% if messages %}
