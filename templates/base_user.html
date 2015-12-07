@@ -36,14 +36,18 @@
     <li>
       <a href="{{ url_for('viewPublishers')}}">Publishers</a>
       <ul>
-        <a href="{{ url_for('newPublisher')}}">New Publisher</a>
+        <li>
+          <a href="{{ url_for('newPublisher')}}">New Publisher</a>
+        </li>
       </ul>
     </li>
  
     <li style='float: right;'>
       <span id='login'>Logged in as: {{ username }}</span>
       <ul>
-        <a id='logout' href="{{ url_for('gdisconnect') }}">Logout</a>
+        <li>
+          <a id='logout' href="{{ url_for('gdisconnect') }}">Logout</a>
+        </li>
       </ul>
     </li>
 
