@@ -182,6 +182,7 @@ h1{
   min-height: 200px;
   min-width: 600px;
   border: 1px solid #a6a6a6;
+  border-radius: 5px;
 }
 
 .flash{
