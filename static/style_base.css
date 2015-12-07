@@ -258,7 +258,7 @@ h1{
 	left:0; /* Bring back on-screen when needed */
 }
 #nav li:hover a{ /* These create persistent hover states, meaning the top-most link stays 'hovered' even when your cursor has moved down the list. */
-	background:#6b0c36;
+	background:#004c4d;
 	text-decoration:underline;
 }
 #nav li:hover ul a{ /* The persistent hover state does however create a global style for links even before they're hovered. Here we undo these effects. */
