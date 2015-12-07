@@ -116,15 +116,18 @@ h1{
   border: 1px transparent;
   border-radius: 1em;
   padding: 0.3em;
-  background-color: green;
+  background-color: #006633;
+  color: #fff;
+  cursor: pointer;
 }
 
 #logout{
   border: 1px transparent;
   border-radius: 1em;
-  background-color: red;
-  margin-top:0.2em;
+  background-color: #990000;
+  color: #fff;
   font-size: 1em;
+  padding:0.3em;
 }
 
 #sub-header{
