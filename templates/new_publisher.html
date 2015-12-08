@@ -6,7 +6,7 @@
 <div id='content'>
   <h2>New Publisher</h2>
   <div style='margin-bottom:10px;'>
-    <form action="{{ url_for('newPublisher')}}" method='post' enctype='multipart/form-data'>
+    <form action="{{ url_for('newPublisher')}}" method='post' enctype='multipart/form-data' id='form1'>
     <h4><label for='publisher'>Genre:</label></h4>
     <input type='text' size='32' name='name' maxlength='50' required='required'>
     <input type='submit'  value='Create' class='go-button button'></input>

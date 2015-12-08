@@ -17,7 +17,7 @@
       <p class='inline'><a href="{{ url_for('viewPubPage', pub_name=i )}}">{{ i }} </a></p>
       {% if username %}
       <p class='inline'> - </p>
-      <form action='#' method='post' enctype='multipart/form-data' class='inline'>
+      <form action='#' method='post' enctype='multipart/form-data' class='inline' id='form1'>
       <input type='submit' value='Delete' name='delete' class='delete-button button'>
       <input type='text' name='name' value='{{ i }}' class='invis'>
       </form>

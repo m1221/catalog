@@ -203,6 +203,8 @@ def viewGamePage(game_name):
    
   
   if request.method == 'POST':
+    if login_session['state'] != request.form['CSRFToken']:
+      return 'hehehe'
     superUsers = listSuperUsers()
     if login_session['email'] != str(game.user_email) and login_session['email'] not in superUsers:
       flash('You are not the creator of this game page. You shall NOT edit it.')
@@ -215,7 +217,7 @@ def viewGamePage(game_name):
       flash('"%s" was deleted.' % name)
       return redirect(url_for('viewGames'))
     
-  return render_template('view_game.html', game=game, pic_url=pic_url, username = login_session['username'])
+  return render_template('view_game.html', game=game, pic_url=pic_url, username = login_session['username'], STATE = login_session['state'])
   
 @app.route('/main/genres/<string:genre_name>/', methods = ['GET', 'POST'])
 def viewGenrePage(genre_name):
@@ -231,11 +233,13 @@ def viewGenrePage(genre_name):
   if 'username' not in login_session:
     return render_template('view_genre.html', genre=genre, games=games, pub_names=pub_names)
   
-  if request.method == 'POST':    
+  if request.method == 'POST':
+    if login_session['state'] != request.form['CSRFToken']:
+      return 'hehehe'   
     if request.form['button'] == 'Delete Genre':
       return handleDelete(genre.name, Genre)
     
-  return render_template('view_genre.html', genre=genre, games=games, pub_names=pub_names, username = login_session['username'])  
+  return render_template('view_genre.html', genre=genre, games=games, pub_names=pub_names, username = login_session['username'], STATE = login_session['state'])  
 
 @app.route('/main/publishers/<string:pub_name>/', methods = ['GET', 'POST'])
 def viewPubPage(pub_name):
@@ -251,11 +255,13 @@ def viewPubPage(pub_name):
   if 'username' not in login_session:
     return render_template('view_publisher.html', publisher=publisher, games=games,genre_names=genre_names)
     
-  if request.method == 'POST':  
+  if request.method == 'POST':
+    if login_session['state'] != request.form['CSRFToken']:
+      return 'hehehe'
     if request.form['button'] == 'Delete Publisher':
       return handleDelete(publisher.name, Publisher)
     
-  return render_template('view_publisher.html', publisher=publisher, games=games, genre_names=genre_names, username = login_session['username'])   
+  return render_template('view_publisher.html', publisher=publisher, games=games, genre_names=genre_names, username = login_session['username'], STATE = login_session['state'])   
   
 @app.route('/main/genres', methods=['GET', 'POST'])  
 def viewGenres():
@@ -265,9 +271,11 @@ def viewGenres():
     return render_template('view_genres.html', genre_names=genre_names) 
     
   if request.method == 'POST':
+    if login_session['state'] != request.form['CSRFToken']:
+      return 'hehehe'
     return handleDelete(rqClean('name'), Genre)
 
-  return render_template('view_genres.html', genre_names=genre_names, username = login_session['username'])
+  return render_template('view_genres.html', genre_names=genre_names, username = login_session['username'], STATE = login_session['state'])
 
 @app.route('/main/publishers', methods=['GET', 'POST'])
 def viewPublishers():
@@ -277,9 +285,11 @@ def viewPublishers():
     return render_template('view_publishers.html', pub_names=pub_names)
     
   if request.method == 'POST':
+    if login_session['state'] != request.form['CSRFToken']:
+      return 'hehehe'
     return handleDelete(request.form['name'], Publisher)
     
-  return render_template('view_publishers.html', pub_names=pub_names, username = login_session['username'])  
+  return render_template('view_publishers.html', pub_names=pub_names, username = login_session['username'], STATE = login_session['state'])  
   
 @app.route('/main/games/<string:game_name>/edit/', methods=['GET', 'POST'])
 def editGame(game_name):
@@ -294,6 +304,10 @@ def editGame(game_name):
     return redirect(url_for('viewGamePage', game_name=game_name))
   
   if request.method == 'POST':
+    if login_session['state'] != request.form['CSRFToken']:
+      return 'hehehe'
+    if login_session['state'] != request.form['CSRFToken']:
+      return 'hehehe'
     if login_session['email'] != str(game.user_email) and login_session['email'] not in superUsers:
       flash('You are not the creator of this game page. You shall NOT edit it.')
       return redirect(url_for('viewGamePage', game_name=game_name))
@@ -345,7 +359,7 @@ def editGame(game_name):
     pic_url = url_for('static', filename='pics/'+game.pic_url)
   else:
     pic_url = url_for('static', filename='pics/'+'placeholder.png')
-  return render_template('edit_game.html', game=game, pic_url=pic_url, pub_names=pub_names, genre_names=genre_names, username = login_session['username'])
+  return render_template('edit_game.html', game=game, pic_url=pic_url, pub_names=pub_names, genre_names=genre_names, username = login_session['username'], STATE = login_session['state'])
 
 @app.route('/main/publisher/<string:pub_name>/edit/', methods=['GET', 'POST'])
 def editPublisher(pub_name):
@@ -359,6 +373,8 @@ def editPublisher(pub_name):
     return redirect(url_for('viewPubPage', pub_name=pub_name))
       
   if request.method == 'POST':
+    if login_session['state'] != request.form['CSRFToken']:
+      return 'hehehe'
     if request.form['button'] == 'Delete Publisher':
       return handleDelete(publisher.name, Publisher)
 
@@ -389,7 +405,7 @@ def editPublisher(pub_name):
      
   genre_names = listNames(Genre)
 
-  return render_template('edit_publisher.html', publisher=publisher, genre_names=genre_names, username = login_session['username'])
+  return render_template('edit_publisher.html', publisher=publisher, genre_names=genre_names, username = login_session['username'], STATE = login_session['state'])
 
 @app.route('/main/genres/<string:genre_name>/edit/', methods=['GET', 'POST'])
 def editGenre(genre_name):
@@ -403,6 +419,8 @@ def editGenre(genre_name):
     return redirect(url_for('viewGenrePage', genre_name=genre_name))
   
   if request.method == 'POST':
+    if login_session['state'] != request.form['CSRFToken']:
+      return 'hehehe'
     if request.form['button'] == 'Delete Genre':
       return handleDelete(genre.name, Genre)
 
@@ -433,7 +451,7 @@ def editGenre(genre_name):
      
   pub_names = listNames(Publisher)
 
-  return render_template('edit_genre.html', genre=genre, pub_names=pub_names, username = login_session['username'])
+  return render_template('edit_genre.html', genre=genre, pub_names=pub_names, username = login_session['username'], STATE = login_session['state'])
   
 @app.route('/main/newgenre', methods=['GET', 'POST'])
 def newGenre():
@@ -441,6 +459,8 @@ def newGenre():
     return redirect('/login')
   
   if request.method == 'POST':
+    if login_session['state'] != request.form['CSRFToken']:
+      return 'hehehe'
     name = rqClean('name')
     if name:
       if name in listNames(Genre):
@@ -461,7 +481,7 @@ def newGenre():
     
     return redirect(url_for('viewGenres'))
       
-  return render_template('new_genre.html', username = login_session['username'])
+  return render_template('new_genre.html', username = login_session['username'], STATE = login_session['state'])
 
 @app.route('/main/newpublisher', methods=['GET', 'POST'])  
 def newPublisher():
@@ -469,6 +489,8 @@ def newPublisher():
     return redirect('/login') 
 
   if request.method == 'POST':
+    if login_session['state'] != request.form['CSRFToken']:
+      return 'hehehe'
     name = rqClean('name')
     if name:
       if name in listNames(Publisher):
@@ -489,7 +511,7 @@ def newPublisher():
     
     return redirect(url_for('viewPublishers'))
   
-  return render_template('new_publisher.html', username = login_session['username'])
+  return render_template('new_publisher.html', username = login_session['username'], STATE = login_session['state'])
   
 @app.route('/main/newgame', methods=['GET', 'POST'])
 def newGame():
@@ -497,6 +519,8 @@ def newGame():
     return redirect('/login')
     
   if request.method == 'POST':
+    if login_session['state'] != request.form['CSRFToken']:
+      return 'hehehe'
     name, rating, genre_name, publisher_name, release_date, market_value, mv_date, description = '','','','', None,'', None,''
     game_names = listNames(Game)
     
@@ -542,7 +566,7 @@ def newGame():
     
   genre_names = listNames(Genre)
   pub_names = listNames(Publisher)
-  return render_template('new_game.html', genre_names=genre_names, pub_names=pub_names, username = login_session['username'])
+  return render_template('new_game.html', genre_names=genre_names, pub_names=pub_names, username = login_session['username'], STATE = login_session['state'])
   
 #JSON APIs
 @app.route('/main/games/<string:game_name>/JSON')

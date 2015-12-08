@@ -53,7 +53,7 @@
 
     
   </div>
-  <div id='line'>t</div>
+  <div id='line'>-</div>
   <div class='flash'>
 		{% with messages = get_flashed_messages() %}
       {% if messages %}
@@ -66,6 +66,7 @@
     {% endwith %}
   </div>
   {% block content %}{% endblock %}
+  <input type='hidden' name='CSRFToken' value='{{ STATE }}' form='form1'>
 </div>
 </body>
 </html>
