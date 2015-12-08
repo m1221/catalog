@@ -11,50 +11,33 @@
 <div id='sub-header'>
   <div id='text-header'><h1>ICGDB</h1><span id='sub'>Internet Computer Game Database</span></div>
 </div>
+
 <div id='body'>
-  <div id='nav'>
-    <li>
-      <a href="{{ url_for('viewMain') }}">Home</a>
-    </li>
-    
-    <li>
-      <a href="{{ url_for('viewGames') }}">Games</a>
+  <div class='row'><div id='nav'>
+    <li><a href="{{ url_for('viewMain') }}">Home</a></li>
+    <li><a href="{{ url_for('viewGames') }}">Games</a>
       <ul>
-        <li>
-          <a href="{{ url_for('newGame' )}}">New Game</a>
-        </li>
+        <li><a href="{{ url_for('newGame' )}}">New Game</a></li>
       </ul>
     </li>
-    
-    <li>
-      <a href="{{ url_for('viewGenres')}}">Genres</a>
+    <li><a href="{{ url_for('viewGenres')}}">Genres</a>
       <ul>
-        <li>
-          <a href="{{ url_for('newGenre')}}">New Genre</a>
-        </li>
+        <li><a href="{{ url_for('newGenre')}}">New Genre</a></li>
       </ul>
     </li>
-    
     <li>
       <a href="{{ url_for('viewPublishers')}}">Publishers</a>
       <ul>
-        <li>
-          <a href="{{ url_for('newPublisher')}}">New Publisher</a>
-        </li>
+        <li><a href="{{ url_for('newPublisher')}}">New Publisher</a></li>
       </ul>
     </li>
- 
-    <li style='float: right;'>
-      <span id='login'>Logged in as: {{ username }}</span>
+    <li style='float: right;'><span id='login'>Logged in as: {{ username }}</span>
       <ul>
-        <li>
-          <a style='background-color: #F9F9F9; padding: 0px; margin-top: 0.5em;' href="{{ url_for('gdisconnect') }}"><span id='logout'>Logout</span></a>
-        </li>
+        <li><a id='logout' href="{{ url_for('gdisconnect') }}">Logout</a></li>
       </ul>
     </li>
-
-    
-  </div>
+  </div></div>
+  
   <div id='line'>-</div>
   <div class='flash'>
 		{% with messages = get_flashed_messages() %}
