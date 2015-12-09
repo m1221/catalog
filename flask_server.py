@@ -172,10 +172,11 @@ def gdisconnect():
 @app.route('/')
 @app.route('/main/')
 def viewMain():
+  picnumber = random.randint(1,2)
   game = session.query(Game.description).first()
   if 'username' not in login_session:
-    return render_template('main.html', game=game)
-  return render_template('main.html', game=game, username = login_session['username'])
+    return render_template('main.html', game=game, picnumber=picnumber)
+  return render_template('main.html', game=game, username = login_session['username'], picnumber=picnumber)
   
 @app.route('/main/games')
 def viewGames():

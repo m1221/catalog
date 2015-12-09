@@ -3,79 +3,98 @@
 <title>ICGDB - New Game</title>
 {% endblock %}
 {% block content %}
-<div id='content'>
-  <form action="{{ url_for('newGame') }}" method='post' enctype='multipart/form-data' id='form1'>
-  <div style='margin-bottom: 15px;'>
-    <label for='name'></label><input type='text' size='25' name='name' maxlength='50' required='required'>
-    <h2 style='display: inline;'> - </h2>
-    <input style='margin-left: 10px;' type='submit' value='Enter Game' name='enter' class='go-button button'></input>
+<form action="{{ url_for('newGame') }}" method='post' enctype='multipart/form-data' id='form1'>
+<!-- MAIN BOX-->
+<div class='row'>
+  <!--IMAGE BOX-->
+  <div class='col30 image-box' style='height: 40em; position: relative;'>
+    <img class='image' id='img-to-change' src="{{ url_for('static', filename='pics/'+'placeholder.png') }}" alt='oops! image failed to load' id='img-to-change'>
+    <input name='game-image' id='new-img' accept='image/*' type='file' onchange='previewPic()' style='position: absolute; bottom: 0; left: 0;'>
   </div>
-  
-  
-  <div class='top-box'>
-    <div id='game-pic-holder'>
-      <img class='pic' src="{{ url_for('static', filename='pics/'+'placeholder.png') }}" alt='oops! image failed to load' id='img-to-change'>
-      <input name='game-image' accept='image/*' type='file' onchange='previewPic()' id='new-img'>
-    </div>
- 
-    <div class='game-info'>      
-      <div class='row'>
-        <div class='cell'>
-          <h4><label for='genre'>Genre:</label></h4>
-          <select name='genre'>
-            {% for name in genre_names %}
-              {% if name == "Other" %}
-                <option value="{{ name }}" selected="selected">{{ name }}</option>
-              {% else %}
-                <option value="{{ name }}">{{ name }}</option>
-              {% endif %}
-            {% endfor %}
-          </select>
-        </div> 
-
-        <div class='cell'>        
-          <h4><label for='rating'>Rating:</label></h4><input type='text' size='8' name='rating' placeholder='xx/100' maxlength='7'>
-        </div>
+  <!--SPACE FILLER-->
+  <div class='col2-5'></div>
+  <!--GAME INFO-->
+  <div class='col60'>
+    <!-- ROW 1 -->
+    <div class='row game-row'>
+      <div class='col80'>
+        <span class='text bold'>Game Name: <input type='text' size='25' name='name' maxlength='50' required='required'></span>
       </div>
-      
-      <div class='row'>
-        <div class='cell'>
-          <h4><label for='publisher'>Publisher:</label></h4>
-          <select name='publisher'>
-            {% for name in pub_names %}
-              {% if name == "Other" %}
-                <option value="{{ name }}" selected="selected">{{ name }}</option>
-              {% else %}
-                <option value="{{ name }}">{{ name }}</option>
-              {% endif %}
-            {% endfor %}
-          </select>
-        </div>
-      
-        <div class='cell'>
-          <h4>Market Value:</h4><input type='text' size='8' name='market_value' placeholder='$xx' maxlength='6'>
-        </div>
-      </div>  
-      
-      <div class='row'>
-        <div class='cell'>
-          <h4><label for='rdate'>Release Date:</label></h4><input type='text' onblur='checkDate(rdate)' size='15' name='rdate' id='rdate' placeholder='yyyy-mm-dd' maxlength='10'>
-        </div> 
-        
-        <div class='cell'>
-          <h4>Market Value Date:</h4><input type='text' onblur='checkDate(mv_date)' size='15' name='mv_date' id='mv_date' placeholder='yyyy-mm-dd' maxlength='10'>
-        </div>
-      </div> 
+      <div class='col20'>
+        <span class='text bold'><input style='margin-left: 10px;' type='submit' value='Enter Game' name='enter' class='go-button button'></span>
+      </div>
     </div>
+    <!-- ROW 2 -->
+    <div class='row game-row'>
+      <div class='col50'><span class='text bold'>
+        Genre:
+        </br>
+        <select name='genre'>
+          {% for name in genre_names %}
+            {% if name == "Other" %}
+              <option value="{{ name }}" selected="selected">{{ name }}</option>
+            {% else %}
+              <option value="{{ name }}">{{ name }}</option>
+            {% endif %}
+          {% endfor %}
+        </select>
+      </span></div>
+      <div class='col50'><span class='text bold'>
+        Rating:
+        </br>
+        <input type='text' size='8' name='rating' placeholder='xx/100' maxlength='7'>
+      </span></div>
+    </div>
+    <!-- ROW 3 -->
+    <div class='row game-row'>
+      <div class='col50'><span class='text bold'>
+        Publisher:
+        </br>
+        <select name='publisher'>
+          {% for name in pub_names %}
+            {% if name == "Other" %}
+              <option value="{{ name }}" selected="selected">{{ name }}</option>
+            {% else %}
+              <option value="{{ name }}">{{ name }}</option>
+            {% endif %}
+          {% endfor %}
+          </select>
+      </span></div>
+      <div class='col50'><span class='text bold'>
+        Market Value:
+        </br>
+        <input type='text' size='8' name='market_value' placeholder='$xx' maxlength='6'>
+      </span></div>
+    </div>
+    <!-- ROW 4 -->
+    <div class='row game-row'>
+      <div class='col50'><span class='text bold'>
+        Release Date:
+        </br>
+        <input type='text' onblur='checkDate(rdate)' size='15' name='rdate' id='rdate' placeholder='yyyy-mm-dd' maxlength='10'>
+      </span></div>
+      <div class='col50'><span class='text bold'>
+        Market Value Date:
+        </br>
+        <input type='text' onblur='checkDate(mv_date)' size='15' name='mv_date' id='mv_date' placeholder='yyyy-mm-dd' maxlength='10'>
+      </span></div>
+    </div>
+    <!-- ROW 5 -->
+    <div class='row game-row'>
+      <div class='col100'><span class='text bold'>
+        Game Description:
+        </br>
+        <textarea name='description' cols='50' rows='6' style='height:15em; width: 100%;'></textarea>
+      </span></div>
+    </div>
+    
   </div>
-  
-  <div class='descrip' style='margin-bottom: 15px'>
-    <label for='description'><h2>Game Description:</h2></label>
-    <textarea name='description' cols='100' rows='6'></textarea>
-  </div>
-  
-  </form>  
+  <!--SPACE FILLER-->
+  <div class='col5'></div>
 </div>
+</br>
+</br>
+</form>
 
 <script>
   function previewPic(){

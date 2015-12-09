@@ -32,11 +32,26 @@ abbr,acronym{
 }
 
 /*------------------------------------*\
-	GRID LAYOUT STYLING
+	GRID LAYOUT
 \*------------------------------------*/
 body{
   background-color: #F9F9F9;
   font-size: 10px;
+}/* use media query to change font-size of body for tablet. font-size: 6px; */
+
+#body{
+  width: 85em;
+  display: block;
+  
+	margin: auto;
+  margin-top: -0.5em;
+  padding: 0.5empx;
+  padding-top:1em;
+  border-bottom: 0.2em solid rgba(0, 0, 0, 0.5);
+  border-right: 0.2em solid rgba(0, 0, 0, 0.5);
+  border-left: 0.2em solid rgba(0, 0, 0, 0.5);
+  -webkit-border-radius: 2.5em;
+    border-radius: 2.5em;
 }
 
 .row{
@@ -68,12 +83,32 @@ body{
   width: 25%;
 }
 
+.col30{
+  width: 30%;
+}
+
 .col35{
   width: 35%;
 }
 
 .col50{
   width: 50%;
+}
+
+.col55{
+  width: 55%;
+}
+
+.col60{
+  width: 60%;
+}
+
+.col70{
+  width: 70%;
+}
+
+.col80{
+  width: 80%;
 }
 
 .col90{
@@ -84,23 +119,8 @@ body{
 }
 
 /*------------------------------------*\
-	PRIMARY COMPONENTS
+	BANNER COMPONENTS
 \*------------------------------------*/
-
-#body{
-  width: 85em;
-  display: block;
-  
-	margin: auto;
-  margin-top: -0.5em;
-  padding: 0.5empx;
-  padding-top:1em;
-  border-bottom: 0.1em solid black;
-  border-right: 0.1em solid black;
-  border-left: 0.1em solid black;
-  -webkit-border-radius: 2.5em;
-    border-radius: 2.5em;
-}
 
 #banner{
   width: 100%;
@@ -185,48 +205,55 @@ a:visited{
 
 .text{
   font-size: 1.5em;
+}
+
+.bold{
+  font-weight: 800;
+}
+.game-row{
+  padding:1em;
+}
+.image{
+  max-width: 100%;
+  max-height: 40em;
+}
+
+.image-box{
+  text-align: center;
+  padding: 2em;
+  background-color: rgba(0,0,0, 0.4);
+  border-radius: 0.5em;
+  
+}
+
+.test1{
+  height: 40em;
+  position: relative;
+}
+
+.test2{
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+
+.lists{
+  font-size: 1.5em;
   padding: 0.5em;
 }
 
-.pic{
-  float: left;
-  max-height: 38em;
-  margin-bottom: 1em;
+li.items{
+  padding-bottom: 0.6em;
 }
-
-#bar{
-  display: block;
-  min-height: 4em;
-  border: 0.1em solid black;
-  -webkit-border-radius: 1em;
-    border-radius: 1em;
-  margin-bottom: 1em;
-}
-
-#bar-user{
-  display: block;
-  min-height: 7em;
-  border: 1px solid black;
-  -webkit-border-radius: 10px;
-    border-radius: 10px;
-  margin-bottom: 10px;
-}
-
-
-
 
 
 #line{
-  border-top: 1px solid black;
+  border-top: 1px solid rgba(0, 0, 0, 0.5);
   margin-top: 1em;
   height: 2em;
   font-size: 1.5em;
 }
 
-#game-pic-holder{
-  max-width: 250px;
-  float: left;
-}
 
 .box{
   display: flex;
@@ -244,10 +271,6 @@ a:visited{
   cursor: pointer;
   padding: 0.2em;
   font-weight: 800;
-}
-
-.cell{
-  width: 200px;
 }
 
 .delete-button:hover{
@@ -276,12 +299,6 @@ a:visited{
   background-color: #ffff66;
 }
 
-.game-info{
-  display: inline;
-  float: right;
-  margin-left: 80px;
-  width:400px;
-}
 
 .inline{
   display: inline;
@@ -289,15 +306,6 @@ a:visited{
 
 .invis{
   display: none;
-}
-/* what was this??
-.row{
-  display: flex;
-  width: 400px;
-}
-*/
-.top-box{
-  display: flex;
 }
 
 /*------------------------------------*\

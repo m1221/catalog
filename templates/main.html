@@ -8,12 +8,17 @@
 <title>ICGDB - Home</title>
 {% endblock %}
 {% block content %}
-<div class='row heading1'><div class='col90'>Welcome!</div></div>
+<div class='row heading1'><div class='col100'>Welcome!</div></div>
 <div class='row'>
   <div class='col5'></div>
-  <div class='col90'>
-    <img class='pic' src="{{ url_for('static', filename='pics/main.jpg') }}" alt='oops! image failed to load'>
+  <div class='col90 image-box'>
+    {% if picnumber == 1 %}
+      <img class='image' src="{{ url_for('static', filename='pics/main2.jpg') }}" alt='oops! image failed to load'>
+    {% elif picnumber == 2 %}
+      <img class='image' src="{{ url_for('static', filename='pics/main3.jpg') }}" alt='oops! image failed to load'>
+    {% endif %}
   </div>
+  <div class='col5'></div>
 </div>
 <div class='row heading2'><div class='col100'>Lorem!!</div></div>  
 <div class='row text'><div class='col90'>{{ game[0] }}</div></div>
