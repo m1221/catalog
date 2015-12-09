@@ -7,13 +7,22 @@
   {% block head %}{% endblock %}
 </head>
 <body>
-<div id='header'></div>
-<div id='sub-header'>
-  <div id='text-header'><h1>ICGDB</h1><span id='sub'>Internet Computer Game Database</span></div>
+
+<div id='banner'>
+  <div class='row' style='height: 1.2em; background-color:black;'></div>
+  <div class='row'  id='banner-image'></div>
+  <div class='row' style='height: 1em; background-color:black;'></div>
+</div>
+
+<div id='banner-overlay'>
+  <div class='row' id='banner-row'>
+    <div class='col20' id='banner-header'><span id='banner-header-text'>ICGDB</span></div>
+    <div class='col50' id='banner-subheader'><span id='banner-subheader-text'>Internet Computer Game Database</span></div>
+  </div>
 </div>
 
 <div id='body'>
-  <div class='row'><div id='nav'>
+  <div class='row'><div class='col100'><div id='nav'>
     <li><a href="{{ url_for('viewMain') }}">Home</a></li>
     <li><a href="{{ url_for('viewGames') }}">Games</a>
       <ul>
@@ -33,13 +42,13 @@
     </li>
     <li style='float: right;'><span id='login'>Logged in as: {{ username }}</span>
       <ul>
-        <li><a id='logout' href="{{ url_for('gdisconnect') }}">Logout</a></li>
+        <li><a id='logout' style='background-color: #990000' href="{{ url_for('gdisconnect') }}">Logout</a></li>
       </ul>
     </li>
-  </div></div>
+  </div></div></div>
   
-  <div id='line'>-</div>
-  <div class='flash'>
+  <div class='row' id='line'><div class='col100' >
+    <div class='flash'>
 		{% with messages = get_flashed_messages() %}
       {% if messages %}
         <ul>
@@ -49,7 +58,8 @@
         </ul>
       {% endif %}
     {% endwith %}
-  </div>
+    </div>
+  </div></div>
   {% block content %}{% endblock %}
   <input type='hidden' name='CSRFToken' value='{{ STATE }}' form='form1'>
 </div>

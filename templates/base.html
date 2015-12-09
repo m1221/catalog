@@ -7,20 +7,42 @@
   {% block head %}{% endblock %}
 </head>
 <body>
-<div id='header'></div>
-<div id='sub-header'>
-  <div id='text-header'><h1>ICGDB</h1><span id='sub'>Internet Computer Game Database</span></div>
+
+<div id='banner'>
+  <div class='row' style='height: 1.2em; background-color:black;'></div>
+  <div class='row'  id='banner-image'></div>
+  <div class='row' style='height: 1em; background-color:black;'></div>
 </div>
+
+<div id='banner-overlay'>
+  <div class='row' id='banner-row'>
+    <div class='col20' id='banner-header'><span id='banner-header-text'>ICGDB</span></div>
+    <div class='col50' id='banner-subheader'><span id='banner-subheader-text'>Internet Computer Game Database</span></div>
+  </div>
+</div>
+
 <div id='body'>
-  <div id='nav'>
+  <div class='row'><div class='col100'><div id='nav'>
     <li><a href="{{ url_for('viewMain') }}">Home</a></li>
     <li><a href="{{ url_for('viewGames') }}">Games</a></li>
     <li><a href="{{ url_for('viewGenres')}}">Genres</a></li>
     <li><a href="{{ url_for('viewPublishers')}}">Publishers</a></li>
-    
-    <li style='float:right;'><a style='background-color: #F9F9F9;' href="{{ url_for('showLogin') }}"><span id='login'>Login</span></a></li> 
-  </div>
-  <div id='line'>t</div>
+    <li style='float:right;'><a style='background-color: #F9F9F9;' href="{{ url_for('showLogin') }}"><span id='login'>Login</span></a></li>
+  </div></div></div>
+  
+  <div class='row' id='line'><div class='col100' >
+    <div class='flash'>
+		{% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul>
+        {% for message in messages %}
+          <li> <strong> {{ message }} </strong> </li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+    </div>
+  </div></div>
   {% block content %}{% endblock %}
 </div>
 </body>

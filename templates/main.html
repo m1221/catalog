@@ -8,12 +8,13 @@
 <title>ICGDB - Home</title>
 {% endblock %}
 {% block content %}
-<div id='content'>
-  <h2>Welcome!</h2>
-  <div class='top-box'>
-    <div><img class='pic' src="{{ url_for('static', filename='pics/main.jpg') }}" alt='oops! image failed to load'></div>
+<div class='row heading1'><div class='col90'>Welcome!</div></div>
+<div class='row'>
+  <div class='col5'></div>
+  <div class='col90'>
+    <img class='pic' src="{{ url_for('static', filename='pics/main.jpg') }}" alt='oops! image failed to load'>
   </div>
-  <h3>Lorem!!</h3>
-  <p>{{ game[0] }}</p>
 </div>
+<div class='row heading2'><div class='col100'>Lorem!!</div></div>  
+<div class='row text'><div class='col90'>{{ game[0] }}</div></div>
 {% endblock %}
