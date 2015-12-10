@@ -323,8 +323,13 @@ def editGame(game_name):
     if request.files['game-image']:
       game.pic_url = uploadFile()
     
-    if rqClean('name'):
-      game.name = rqClean('name')
+    name=rqClean('name')
+    if name: # editing a game to duplicate its name
+      if name in listNames(Game):
+        flash('Name already taken! "%s" NOT created!' % name)
+        return redirect('#')
+      else:
+        game.name=name
     if rqClean('genre') != game.genre_name:
       game.genre_name = rqClean('genre')
     if rqClean('publisher') != game.publisher_name:
@@ -383,12 +388,12 @@ def editPublisher(pub_name):
       return redirect(url_for('viewPubPage', pub_name=pub_name))
     
     name = rqClean('name')
-    if name: # editing a game to duplicate its name
+    if name: # editing a publisher to duplicate its name
       if name in listNames(Publisher):
         flash('Name already taken! "%s" NOT created!' % name)
         return redirect('#')
-    else:
-      pass
+      else:
+        publisher.name=name
     
     publisher_descrip = rqClean('description')
     if publisher_descrip:
@@ -404,9 +409,14 @@ def editPublisher(pub_name):
       flash('No changes saved.')
       return redirect(url_for('editPublisher', pub_name=publisher.name))
      
-  genre_names = listNames(Genre)
+  games = session.query(Game).filter(Game.publisher_name == pub_name).order_by(Game.name).all()
+  genre_names = []
+  for game in games:
+    if game.genre_name not in genre_names:
+      genre_names.append(game.genre_name)
+    genre_names.sort()
 
-  return render_template('edit_publisher.html', publisher=publisher, genre_names=genre_names, username = login_session['username'], STATE = login_session['state'])
+  return render_template('edit_publisher.html', games=games, publisher=publisher, genre_names=genre_names, username = login_session['username'], STATE = login_session['state'])
 
 @app.route('/main/genres/<string:genre_name>/edit/', methods=['GET', 'POST'])
 def editGenre(genre_name):
@@ -433,8 +443,8 @@ def editGenre(genre_name):
       if name in listNames(Genre):
         flash('Name already taken! "%s" NOT created!' % name)
         return redirect('/main/newgenre')
-    else:
-      pass
+      else:
+        genre.name = name
     
     genre_descrip = rqClean('description')
     if genre_descrip:
@@ -449,10 +459,15 @@ def editGenre(genre_name):
     else:
       flash('No changes saved.')
       return redirect(url_for('editGenre', genre_name=genre.name))
-     
-  pub_names = listNames(Publisher)
+      
+  games = session.query(Game).filter(Game.genre_name == genre_name).order_by(Game.name).all()  
+  pub_names = []
+  for game in games:
+    if game.publisher_name not in pub_names:
+      pub_names.append(game.publisher_name)
+    pub_names.sort()
 
-  return render_template('edit_genre.html', genre=genre, pub_names=pub_names, username = login_session['username'], STATE = login_session['state'])
+  return render_template('edit_genre.html', games=games, genre=genre, pub_names=pub_names, username = login_session['username'], STATE = login_session['state'])
   
 @app.route('/main/newgenre', methods=['GET', 'POST'])
 def newGenre():

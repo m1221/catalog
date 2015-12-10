@@ -2,8 +2,7 @@
 <head>
   <meta charset="UTF-8">
   <link rel='stylesheet' media="handheld" href="{{ url_for('static', filename='style_base_mobile.css') }}">
-  <link rel='stylesheet' media="not handheld and (max-width: 700px)" href="{{ url_for('static', filename='style_base_tab.css') }}">
-  <link rel='stylesheet' media="not handheld and (min-width: 701px)" href="{{ url_for('static', filename='style_base_pc.css') }}">
+  <link rel='stylesheet' media="not handheld and (min-width: 701px)" href="{{ url_for('static', filename='style_base.css') }}">
   {% block head %}{% endblock %}
 </head>
 <body>

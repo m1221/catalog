@@ -6,59 +6,90 @@
 
 {% block head %}
 <title>ICGDB - View Publisher</title>
-<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style_views.css') }}">
 {% endblock %}
 {% block content %}
-<div id='content'>
-  
-   <div style='margin-bottom: 15px;'>
-    <h2>Publisher: {{ publisher.name }}</h2>
-    <a href="{{ url_for('viewPublishers') }}"><input type='button' value='Back' class='back-button button'></a>
+<!-- ROW 0 -->
+<div class='row'>
+  <div class='col2-5'></div>
+  <div class='col50'>
+    <span class='text'><a href="{{ url_for('viewPublishers') }}"><input type='button' value='Back' class='back-button button'></a>
     {% if username %}
-    <a href="{{ url_for('editPublisher', pub_name=publisher.name) }}"><input type='button' style='margin-left: 10px;' value='Edit Publisher' class='go-button button'></a>
+    <a href="{{ url_for('editPublisher', pub_name=publisher.name) }}"><input type='button' value='Edit Publisher' class='go-button button'></a>
     <form action="#" method='post' enctype='multipart/form-data' style='display: inline;' id='form1'>
-      <input style='margin-left: 10px;' type='submit' value='Delete Publisher' name='button' class='delete-button button'>
+      <input type='submit' value='Delete Publisher' name='button' class='delete-button button'>
     </form>
-    {% endif %}
+    </span>
+    {% endif %} 
   </div>
-  
-  <div class='descrip'>
-    <h2>Publisher Description:</h2>
-    <p>{{ publisher.description }}</p>
-  </div>
-  
-  <!-- Genre Select Drop-down button-->
-  <span style='font-weight: 800;'> Show Genre: </span>
-  <select id='genreSelect' onchange='showGenre()'>
-    <option value="All">All</option>
-    {% for name in genre_names %}
-    <option value="{{ name }}">{{ name }}</option>
-    {% endfor %}
-  </select>
-  <div id='table'>
-    <div id='table-head'>
-      <div class='ti-name ti-head'>Name</div>
-      <div class='ti-release ti-head'>Release Date</div>
-      <div class='ti-genre ti-head'>Genre</div>
-      <div class='ti-publisher ti-head'>Publisher</div>
-      <div class='ti-rating ti-head'>Rating</div>
-      <div class='ti-mv ti-head'>Market Value</div>
-      <div class='ti-mv_date ti-head'>Market Value Date</div>
-    </div>
-    {% for i in games %}
-    <div id='table-row'> 
-    <div class="{{ i.genre_name }}"><span class="{{ i.publisher_name }}">
-      <div class='ti-name ti-body'><a href="{{ url_for('viewGamePage', game_name=i.name) }}">{{i.name}}</a></div>
-      <div class='ti-release ti-body'>{{i.release_date}}</div>
-      <div class='ti-genre ti-body'><a href="{{ url_for('viewGenrePage', genre_name=i.genre_name) }}">{{i.genre_name}}</div>
-      <div class='ti-publisher ti-body'><a href="{{ url_for('viewPubPage', pub_name=i.publisher_name) }}">{{ i.publisher_name }}</a></div>
-      <div class='ti-rating ti-body'>{{ i.rating }}</div>
-      <div class='ti-mv ti-body'>{{ i.market_value }}</div>
-      <div class='ti-mv_date ti-body'><div class='ti-mv-text'>{{ i.mv_date }}</div></div>
-    </span></div>
-    </div>
-    {% endfor %}
 </div>
+
+<!-- ROW 1 -->
+<div class='row spacer'>
+  <div class='col2-5'></div>
+  <div class='col40'><span class='heading2'>Publisher: {{ publisher.name }}</span></div>
+</div>
+
+<!-- ROW 2-->
+<div class='row spacer'>
+  <div class='col5'></div>
+  <div class='col90'>
+    <span class='text bold'>
+    <span class='block'>Publisher entered by: {{ publisher.user_email}}</span>
+    </br>Description:</span>
+    </br>
+    <span class='text'>{{ publisher.description }}</span>
+  </div>
+</div>
+
+<!-- ROW 3 -->
+<div class='row spacer'>
+  <div class='col5'></div>
+  <div class='col35'><span class='text bold'>Show Genre: </span>
+    <!-- Genre Select Drop-down button-->
+    <select id='genreSelect' onchange='showGenre()'>
+      <option value="All">All</option>
+      {% for name in genre_names %}
+      <option value="{{ name }}">{{ name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class='col60'></div>
+</div>
+
+<div id='table' class='spacer'>
+<!-- ROW 4-->
+
+<div class='row' id='table-head'>
+  <div class='col2-5'></div>
+  <div class='col17-5'><span class='text bold'>Name</span></div>
+  <div class='col10'><span class='text bold'>Release Date</span></div>
+  <div class='col5'></div>
+  <div class='col15'><span class='text bold'>Genre</span></div>
+  <div class='col17-5'><span class='text bold'>Publisher</span></div>
+  <div class='col5'><span class='text bold'>Rating</span></div>
+  <div class='col5'></div>
+  <div class='col10'><span class='text bold'>Market Value</span></div>
+  <div class='col10'><span class='text bold'>Market Value Date</span></div>
+</div>
+<!-- ROW 5 -->
+{% for i in games %}
+<span class="{{ i.genre_name }}">
+<div class='row' id='table-row'>
+  <div class='col2-5'></div>
+  <div class='col17-5'><span class='text'><a href="{{ url_for('viewGamePage', game_name=i.name) }}">{{i.name}}</a></span></div>
+  <div class='col10'><span class='text'>{{i.release_date}}</span></div>
+  <div class='col5'></div>
+  <div class='col15'><span class='text'><a href="{{ url_for('viewGenrePage', genre_name=i.genre_name) }}">{{i.genre_name}}</a></span></div>
+  <div class='col17-5'><span class='text'><a href="{{ url_for('viewPubPage', pub_name=i.publisher_name) }}">{{ i.publisher_name }}</a></span></div>
+  <div class='col5'><span class='text'>{{ i.rating }}</span></div>
+  <div class='col5'></div>
+  <div class='col10'><span class='text'>{{ i.market_value }}</span></div>
+  <div class='col10'><span class='text'>{{ i.mv_date }}</span></div>
+</div>
+</span>
+{% endfor %}
+</div> 
+
 <script>
   var genre_names = [];
   {% for i in  genre_names -%}

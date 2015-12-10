@@ -17,7 +17,7 @@
       <li class='items'>
       <span class='inline'><a href="{{ url_for('viewGenrePage', genre_name=i ) }}">{{ i }} </a> </span>
       {% if username %}
-      <span class='inline'> - </p>
+      <span class='inline'> - </span>
       <form action='#' method='post' enctype='multipart/form-data' class='inline'>
       <input type='submit' value='Delete' name='delete' class='delete-button button'>
       <input type='text' name='name' value='{{ i }}' class='invis'>

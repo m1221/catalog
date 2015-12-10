@@ -41,6 +41,7 @@ body{
 
 #body{
   width: 85em;
+  min-height: 80em;
   display: block;
   
 	margin: auto;
@@ -67,6 +68,9 @@ body{
   width: 5%;
 }
 
+.col7-5{
+  width: 7.5%;
+}
 .col10{
   width: 10%;
 }
@@ -75,6 +79,9 @@ body{
   width: 15%;
 }
 
+.col17-5{
+  width: 17.5%;
+}
 .col20{
   width: 20%;
 }
@@ -91,6 +98,9 @@ body{
   width: 35%;
 }
 
+.col45{
+  width: 45%;
+}
 .col50{
   width: 50%;
 }
@@ -178,6 +188,33 @@ body{
 }
 
 /*------------------------------------*\
+	TABLE STYLING
+\*------------------------------------*/
+
+.off{
+  display: none;
+}
+
+#table{
+  margin: 0.5em 0.5em 3em 0.5em;
+  min-height: 6em;
+  border: 0.1em solid rgba(0,0,0, 0.4);
+  -webkit-border-radius: 2.5em;
+    border-radius: 2.5em;
+}
+
+#table-head{
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  border-bottom: 0.1em solid rgba(0,0,0, 0.4);
+}
+
+#table-row{
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+}
+
+/*------------------------------------*\
 	OTHER STYLING
 \*------------------------------------*/
 
@@ -196,11 +233,13 @@ a:visited{
 .heading1{
   font-size: 2.5em;
   padding: 0.5em;
+  font-weight: 800;
 }
 
 .heading2{
   font-size: 2em;
   padding: 0.5em;
+  font-weight: 700;
 }
 
 .text{
@@ -212,6 +251,15 @@ a:visited{
 }
 .game-row{
   padding:1em;
+}
+
+.spacer{
+  padding-top:1em;
+  padding-bottom: 1em;
+}
+
+.block{
+  display: block;
 }
 .image{
   max-width: 100%;
@@ -226,16 +274,11 @@ a:visited{
   
 }
 
-.test1{
-  height: 40em;
-  position: relative;
+.text-area{
+  height:15em;
+  width: 100%;
 }
 
-.test2{
-  position: absolute;
-  bottom: 0;
-  left: 0;
-}
 
 .lists{
   font-size: 1.5em;
@@ -271,6 +314,7 @@ li.items{
   cursor: pointer;
   padding: 0.2em;
   font-weight: 800;
+  margin-left: 1em;
 }
 
 .delete-button:hover{
