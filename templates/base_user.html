@@ -60,6 +60,11 @@
   </div></div>
   {% block content %}{% endblock %}
   <input type='hidden' name='CSRFToken' value='{{ STATE }}' form='form1'>
+  <script>
+  function goBack(){
+    window.history.back();
+  }
+  </script>
 </div>
 </body>
 </html>

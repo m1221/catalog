@@ -19,7 +19,7 @@
     <!-- ROW 0 -->
     <div class='row game-row'>
       <div class='col100'><span class='text bold'>
-          <a href="{{ url_for('viewGames') }}"><input type='button' value='Back' class='back-button button'></a>
+          <input type='button' onclick='goBack()' value='Back' class='back-button button'></input>
           {% if username %}
           <a href="{{ url_for('editGame', game_name=game.name) }}"><input type='button' value='Edit Game' class='go-button button'></a>
           <input type='submit' value='Delete Game' name='button' class='delete-button button'></input>

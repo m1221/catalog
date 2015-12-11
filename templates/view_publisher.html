@@ -12,14 +12,15 @@
 <div class='row'>
   <div class='col2-5'></div>
   <div class='col70'>
-    <span class='text'><a href="{{ url_for('viewPublishers') }}"><input type='button' value='Back' class='back-button button'></a>
+    <span class='text'>
+    <input type='button' onclick='goBack()' value='Back' class='back-button button'></input>
     {% if username %}
     <a href="{{ url_for('editPublisher', pub_name=publisher.name) }}"><input type='button' value='Edit Publisher' class='go-button button'></a>
     <form action="#" method='post' enctype='multipart/form-data' style='display: inline;' id='form1'>
       <input type='submit' value='Delete Publisher' name='button' class='delete-button button'>
     </form>
-    </span>
     {% endif %} 
+    </span>
   </div>
 </div>
 

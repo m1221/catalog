@@ -13,14 +13,14 @@
   <div class='col2-5'></div>
   <div class='col50'>
     <span class='text'>
-    <a href="{{ url_for('viewGenres') }}"><input type='button' value='Back' class='back-button button'></a>
+    <input type='button' onclick='goBack()' value='Back' class='back-button button'></input>
     {% if username %}
      <a href="{{ url_for('editGenre', genre_name=genre.name) }}"><input type='button' value='Edit Genre' class='go-button button'></a>
     <form action="#" method='post' enctype='multipart/form-data' style='display: inline;' id='form1'>
       <input type='submit' value='Delete Genre' name='button' class='delete-button button'>
     </form>
+    {% endif %}
     </span>
-  {% endif %}
   </div>
 </div>
 
