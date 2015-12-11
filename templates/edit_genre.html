@@ -12,7 +12,7 @@
 <!-- ROW 0 -->
 <div class='row'>
   <div class='col2-5'></div>
-  <div class='col50'>
+  <div class='col70'>
     <span class='text'>
     <a href="{{ url_for('viewGenrePage', genre_name=genre.name) }}"><input type='button' value='Back' class='back-button button'></a>
     <input type='submit' value='Save Changes' name='button' class='go-button button'></input>
@@ -24,7 +24,7 @@
 <!-- ROW 1 -->
 <div class='row spacer'>
   <div class='col2-5'></div>
-  <div class='col40'><span class='heading2'>Genre: <input type='text' size='25' name='name' placeholder='{{ genre.name }}' maxlength='50'></span></div>
+  <div class='col70'><span class='heading2'>Genre: <input type='text' size='25' name='name' placeholder='{{ genre.name }}' maxlength='50'></span></div>
 </div>
 
 <!-- ROW 2-->
@@ -58,34 +58,33 @@
 </div>
 
 <div id='table' class='spacer'>
-<!-- ROW 4-->
-
+<!-- ROW 4 -->
 <div class='row' id='table-head'>
   <div class='col2-5'></div>
-  <div class='col17-5'><span class='text bold'>Name</span></div>
-  <div class='col10'><span class='text bold'>Release Date</span></div>
+  <div class='col-Name'><span class='text bold'>Name</span></div>
+  <div class='col-RD'><span class='text bold'>Release Date</span></div>
   <div class='col5'></div>
-  <div class='col15'><span class='text bold'>Genre</span></div>
-  <div class='col17-5'><span class='text bold'>Publisher</span></div>
-  <div class='col5'><span class='text bold'>Rating</span></div>
+  <div class='col-Genre'><span class='text bold'>Genre</span></div>
+  <div class='col-Pub'><span class='text bold'>Publisher</span></div>
+  <div class='col-Rating'><span class='text bold'>Rating</span></div>
   <div class='col5'></div>
-  <div class='col10'><span class='text bold'>Market Value</span></div>
-  <div class='col10'><span class='text bold'>Market Value Date</span></div>
+  <div class='col-MV'><span class='text bold'>Market Value</span></div>
+  <div class='col-MVD'><span class='text bold'>Market Value Date</span></div>
 </div>
 <!-- ROW 5 -->
 {% for i in games %}
 <span class="{{ i.publisher_name }}">
 <div class='row' id='table-row'>
   <div class='col2-5'></div>
-  <div class='col17-5'><span class='text'><a href="{{ url_for('viewGamePage', game_name=i.name) }}">{{i.name}}</a></span></div>
-  <div class='col10'><span class='text'>{{i.release_date}}</span></div>
+  <div class='col-Name'><span class='text'><a href="{{ url_for('viewGamePage', game_name=i.name) }}">{{i.name}}</a></span></div>
+  <div class='col-RD'><span class='text'>{{i.release_date}}</span></div>
   <div class='col5'></div>
-  <div class='col15'><span class='text'><a href="{{ url_for('viewGenrePage', genre_name=i.genre_name) }}">{{i.genre_name}}</a></span></div>
-  <div class='col17-5'><span class='text'><a href="{{ url_for('viewPubPage', pub_name=i.publisher_name) }}">{{ i.publisher_name }}</a></span></div>
-  <div class='col5'><span class='text'>{{ i.rating }}</span></div>
+  <div class='col-Genre'><span class='text'><a href="{{ url_for('viewGenrePage', genre_name=i.genre_name) }}">{{i.genre_name}}</a></span></div>
+  <div class='col-Pub'><span class='text'><a href="{{ url_for('viewPubPage', pub_name=i.publisher_name) }}">{{ i.publisher_name }}</a></span></div>
+  <div class='col-Rating'><span class='text'>{{ i.rating }}</span></div>
   <div class='col5'></div>
-  <div class='col10'><span class='text'>{{ i.market_value }}</span></div>
-  <div class='col10'><span class='text'>{{ i.mv_date }}</span></div>
+  <div class='col-MV'><span class='text'>{{ i.market_value }}</span></div>
+  <div class='col-MVD'><span class='text'>{{ i.mv_date }}</span></div>
 </div>
 </span>
 {% endfor %}

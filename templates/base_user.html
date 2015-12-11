@@ -1,8 +1,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <link rel='stylesheet' media="handheld" href="{{ url_for('static', filename='style_base_mobile.css') }}">
-  <link rel='stylesheet' media="not handheld and (min-width: 701px)" href="{{ url_for('static', filename='style_base.css') }}">
+  <link rel='stylesheet' href="{{ url_for('static', filename='style_base.css') }}">
   {% block head %}{% endblock %}
 </head>
 <body>
@@ -15,8 +14,8 @@
 
 <div id='banner-overlay'>
   <div class='row' id='banner-row'>
-    <div class='col20' id='banner-header'><span id='banner-header-text'>ICGDB</span></div>
-    <div class='col50' id='banner-subheader'><span id='banner-subheader-text'>Internet Computer Game Database</span></div>
+    <div class='col25' id='banner-header'><span id='banner-header-text'>ICGDB</span></div>
+    <div class='col70' id='banner-subheader'><span id='banner-subheader-text'>Internet Computer Game Database</span></div>
   </div>
 </div>
 
@@ -39,7 +38,7 @@
         <li><a href="{{ url_for('newPublisher')}}">New Publisher</a></li>
       </ul>
     </li>
-    <li style='float: right;'><span id='login'>Logged in as: {{ username }}</span>
+    <li style='float: right;'><div id='login'><span id='hide-login'>Logged in as: {{ username }}</span></div>
       <ul>
         <li><a id='logout' style='background-color: #990000' href="{{ url_for('gdisconnect') }}">Logout</a></li>
       </ul>
@@ -52,7 +51,7 @@
       {% if messages %}
         <ul>
         {% for message in messages %}
-          <li> <strong> {{ message }} </strong> </li>
+          <li> <span class='text bold'> {{ message }} </span> </li>
         {% endfor %}
         </ul>
       {% endif %}

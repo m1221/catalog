@@ -34,19 +34,19 @@ abbr,acronym{
 /*------------------------------------*\
 	GRID LAYOUT
 \*------------------------------------*/
+
 body{
   background-color: #F9F9F9;
   font-size: 10px;
-}/* use media query to change font-size of body for tablet. font-size: 6px; */
+}
 
 #body{
-  width: 85em;
-  min-height: 80em;
   display: block;
+  width: 81em;
+  min-height: 80em;
   
 	margin: auto;
   margin-top: -0.5em;
-  padding: 0.5empx;
   padding-top:1em;
   border-bottom: 0.2em solid rgba(0, 0, 0, 0.5);
   border-right: 0.2em solid rgba(0, 0, 0, 0.5);
@@ -143,11 +143,11 @@ body{
 }
 
 #banner-overlay{
-  width: 85em;
-  display: block;
+  width: 81em;
   
+  display: block;
   margin: auto;
-  margin-top: -100px;
+  margin-top: -10em;
   height: 10em;
 }
 
@@ -214,10 +214,19 @@ body{
   padding-bottom: 0.5em;
 }
 
+
+
+
 /*------------------------------------*\
 	OTHER STYLING
 \*------------------------------------*/
+input{
+  font-size: 1em;
+}
 
+textarea{
+  font-size: 1em;
+}
 
 a{
   text-decoration: none;
@@ -228,22 +237,6 @@ a{
 
 a:visited{
   color: #143937;
-}
-
-.heading1{
-  font-size: 2.5em;
-  padding: 0.5em;
-  font-weight: 800;
-}
-
-.heading2{
-  font-size: 2em;
-  padding: 0.5em;
-  font-weight: 700;
-}
-
-.text{
-  font-size: 1.5em;
 }
 
 .bold{
@@ -297,7 +290,6 @@ li.items{
   font-size: 1.5em;
 }
 
-
 .box{
   display: flex;
 }
@@ -314,7 +306,6 @@ li.items{
   cursor: pointer;
   padding: 0.2em;
   font-weight: 800;
-  margin-left: 1em;
 }
 
 .delete-button:hover{
@@ -357,7 +348,6 @@ li.items{
 \*------------------------------------*/
 
 #nav{
-  font-size: 1.5em;
   margin-top: 0.5em;
 	list-style:none;
 	font-weight:bold;
@@ -382,6 +372,8 @@ li.items{
 	background:#6b0c36;
 	text-decoration:underline;
 }
+
+
 
 /*------------------------------------*\
 	DROPDOWN
@@ -428,3 +420,282 @@ li.items{
   font-size: 1em;
   padding:0.3em;
 }
+
+
+/*------------------------------------*\
+	MEDIA QUERIES
+\*------------------------------------*/
+
+/* Laptop and PC */
+@media (min-device-width: 851px){
+  select{
+    font-size:1.5em;
+  }
+  
+  #nav{
+    font-size: 1.5em;
+  }
+  
+  .row.lists .col15{
+  width: 5%;
+  }
+  
+  #login{
+    border: 1px transparent;
+    border-radius: 1em;
+    padding: 0.3em;
+    background-color: #006633;
+    color: #fff;
+    cursor: pointer;
+  }
+  
+  #hide-login{
+    visibility: visible;
+  }
+  
+  .heading1{
+    font-size: 2.5em;
+    padding: 0.5em;
+    font-weight: 800;
+  }
+
+  .heading2{
+    font-size: 2em;
+    padding: 0.5em;
+    font-weight: 700;
+  }
+
+  .text{
+    font-size: 1.5em;
+  }
+  
+  .col-Name{
+  width: 17.5%;
+  }
+  
+  .col-RD{
+    width: 10%
+  }
+  
+  .col-Genre{
+    width: 15%
+  }
+  
+  .col-Pub{
+    width: 17.5%
+  }
+  
+  .col-Rating{
+    width: 5%
+  }
+  
+  .col-MV{
+    width: 10%
+  }
+  
+  .col-MVD{
+    width: 10%
+  }
+  
+}
+
+/* Tablet */
+@media (max-device-width: 850px) and (min-device-width: 600px){
+  select{
+    height: 2em;
+    width: 5em;
+    font-size:2em;
+  }
+  
+  input{
+  max-width: 7em;
+}
+  
+  #banner-header-text{
+    font-size: 6em;
+  }
+  
+  #banner-subheader-text{
+    font-size: 3em;
+  }
+  
+  #nav{
+  font-size:3em;
+  }
+  
+  #login{
+    width: 2em;
+    height: 1em;
+    
+    border: 1px transparent;
+    border-radius: 1em;
+    padding: 0.3em;
+    background-color: #006633;
+    cursor: pointer;
+  }
+  
+  #hide-login{
+    visibility: hidden;
+  }
+  
+  .heading1{
+    font-size: 3.75em;
+    padding: 0.5em;
+    font-weight: 800;
+  }
+
+  .heading2{
+    font-size: 3.25em;
+    padding: 0.5em;
+    font-weight: 700;
+  }
+
+  .text{
+    font-size: 3em;
+  }
+  
+  li.items{
+    font-size: 2.5em;
+  }
+  
+  .col-Name{
+  width: 35%;
+  }
+  
+  .col-RD{
+    display: none;
+  }
+  
+  .col-Genre{
+    width: 15%
+  }
+  
+  .col-Pub{
+    width: 25%
+  }
+  
+  .col-Rating{
+    width: 10%
+  }
+  
+  .col-MV{
+    display: none;
+  }
+  
+  .col-MVD{
+    display: none;
+  }
+}
+
+/* Mobile */
+@media (max-device-width: 599px){
+  select{
+    height: 3em;
+    width: 7em;
+    font-size:2em;
+  }
+  
+  input{
+  max-width: 5em;
+}
+  
+  #banner-header-text{
+    font-size: 6em;
+  }
+  
+  #banner-subheader-text{
+    font-size: 3em;
+  }
+
+  #nav{
+  font-size:4em;
+  }
+  
+  #login{
+    width: 1em;
+    height: 1em;
+    
+    border: 1px transparent;
+    border-radius: 1em;
+    padding: 0.3em;
+    background-color: #006633;
+    cursor: pointer;
+  }
+  
+  #hide-login{
+    visibility: hidden;
+  }
+  
+  .heading1{
+    font-size: 4.5em;
+    padding: 0.5em;
+    font-weight: 800;
+  }
+
+  .heading2{
+    font-size: 4.25em;
+    padding: 0.5em;
+    font-weight: 700;
+  }
+
+  .text{
+    font-size: 4em;
+  }
+  
+  li.items{
+    font-size: 3.5em;
+  }
+  
+  .col-Name{
+  width: 50%;
+  }
+  
+  .col-RD{
+    display: none;
+  }
+  
+  .col-Genre{
+    width: 25%
+  }
+  
+  .col-Pub{
+    display: none;
+  }
+  
+  .col-Rating{
+    width: 10%
+  }
+  
+  .col-MV{
+    display: none;
+  }
+  
+  .col-MVD{
+    display: none;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -34,8 +34,8 @@
     </div>
     <!-- ROW 2 -->
     <div class='row game-row'>
-      <div class='col50'><span class='text bold'>
-        Genre:
+      <div class='col50'>
+        <span class='text bold'> Genre:</span>
         </br>
         <select name='genre'>
             {% for name in genre_names %}
@@ -46,7 +46,7 @@
               {% endif %}
             {% endfor %}
           </select>
-      </span></div>
+      </div>
       <div class='col50'><span class='text bold'>
         Rating:
         </br>
@@ -55,8 +55,8 @@
     </div>
     <!-- ROW 3 -->
     <div class='row game-row'>
-      <div class='col50'><span class='text bold'>
-        Publisher:
+      <div class='col50'>
+        <span class='text bold'>Publisher:</span>
         </br>
         <select name='publisher'>
             {% for name in pub_names %}
@@ -67,7 +67,7 @@
               {% endif %}
             {% endfor %}
           </select>
-      </span></div>
+      </div>
       <div class='col50'><span class='text bold'>
         Market Value:
         </br>
