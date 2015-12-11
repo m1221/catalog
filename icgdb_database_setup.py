@@ -79,6 +79,7 @@ class Game(Base):
       'publisher': self.publisher.name,
       'release_date': str(self.release_date),
       'rating': self.rating,
+      'market_value': self.market_value,
       'mv_date': str(self.mv_date),
       'pic_url': self.pic_url
     }
