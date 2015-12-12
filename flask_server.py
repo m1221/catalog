@@ -637,35 +637,10 @@ def publishersJSON():
 
 ### BEGIN XML Endpoints
 
-@app.route('/main/games/<string:game_name>/XML')
-def gameXML(game_name):
-    game = session.query(Game).filter_by(name=game_name).one()
-    game_obj = game.serialize
-    
-    game = ET.Element('game', attrib={'genre': game_obj['genre'], 'publisher': game_obj['publisher']})
-    name = ET.SubElement(game, 'name')
-    description = ET.SubElement(game, 'description')
-    release_date = ET.SubElement(game, 'release_date')
-    rating = ET.SubElement(game, 'rating')
-    market_value = ET.SubElement(game, 'market_value')
-    mv_date = ET.SubElement(game, 'mv_date')
-    
-    name.text = game_obj['name']
-    description.text = game_obj['description']
-    release_date.text = game_obj['release_date']
-    rating.text = game_obj['rating']
-    market_value.text = game_obj['market_value']
-    mv_date.text = game_obj['mv_date']
-
-    return ET.tostring(game, encoding="us-ascii", method="xml" )
-
-@app.route('/main/games/XML')
-def gamesXML():
-    games=session.query(Game).all()
-    games=[r.serialize for r in games]
-    
+def gameXMLHelper(games):
+    games_list = [r.serialize for r in games]
     games_string=''
-    for game_obj in games:
+    for game_obj in games_list:
         game = ET.Element('game', attrib={'genre': game_obj['genre'], 'publisher': game_obj['publisher']})
         name = ET.SubElement(game, 'name')
         description = ET.SubElement(game, 'description')
@@ -683,6 +658,16 @@ def gamesXML():
         games_string+= ET.tostring(game, encoding='us-ascii', method='xml')
         
     return games_string
+
+@app.route('/main/games/<string:game_name>/XML')
+def gameXML(game_name):
+    game = [session.query(Game).filter_by(name=game_name).one()]
+    return gameXMLHelper(game)
+
+@app.route('/main/games/XML')
+def gamesXML():
+    games=session.query(Game).all()
+    return gameXMLHelper(games)
     
 @app.route('/main/genres/XML')
 def genresXML():
