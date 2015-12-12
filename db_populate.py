@@ -1,3 +1,15 @@
+"""This module populates the sqlite DB for the ICGDB web app.
+
+License: GPLv3
+Module Description: This module populates the icgdb.db with games,
+users, genres, and publishers by running the db_populate module.
+
+For more information regarding the use of SQLAlchemy in this module, please
+visit the SQLAlchemy ORM documentation.
+
+This package was created to satisfy the Udacity Full Stack Nanodegree
+requirement for the Catalog project.
+"""
 from datetime import datetime
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -9,87 +21,90 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
-# filler text
+# Filler Text
 text_1 = 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?'
 text_2 ='At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus.'
 
-# create superuser
+# Create a user in the User table.
+# For the ability to add/edit/delete data from the database regardless of who
+# entered the data, set the user to a superuser by setting "privilege='superuser'"
 superuser = User(name='Mario Portocarrero', email='m.portocarrero.jr@gmail.com', privilege='superuser')
-session.add(superuser)
-session.commit()
+if session.dirty:
+    session.add(superuser)
+    session.commit()
 
-# Genres
+# Make list containing genre names, descriptions, and ids
 genres = [['RTS',1, text_1], ['RPG',2, text_2], ['FPS',3, text_2],
           ['Sports',4, text_2], ['Turn-based',5,text_1], ['MMO',6,text_1],
           ['MOBA', 7, text_1], ['Horror',8, text_2], ['Other',0, text_2]]
 
-# Add Genres
+# Add genres to DB with information from 'genres' list
 for genre in genres:
-  newGenre = Genre(name=genre[0], id=genre[1], description=genre[2])
-  session.add(newGenre)
-  session.commit()
+    newGenre = Genre(name=genre[0], id=genre[1], description=genre[2])
+    session.add(newGenre)
+    session.commit()
 
-# Publishers
+# Make a list containing publisher names, descriptions, and ids
 publishers = [
-  {
-    'id': 0,
-    'name': 'Other',
-    'description': text_1
-  },
-  {
-    'id': 1,
-    'name': 'Blizzard Entertainment',
-    'description': text_2   
-  },
-  {
-    'id': 2,
-    'name': 'Sega',
-    'description': text_1    
-  },
-  {
-    'id': 3,
-    'name': 'CD Projekt RED',
-    'description': text_1    
-  },
-  {
-    'id': 4,
-    'name': 'Bethesda Softworks',
-    'description': text_2    
-  },
-  {
-    'id': 5,
-    'name': 'Valve Corporation',
-    'description': text_1    
-  },
-  {
-    'id': 6,
-    'name': 'Psyonix',
-    'description': text_1    
-  },
-  {
-    'id': 7,
-    'name': '2k Games',
-    'description': text_2    
-  },
-  {
-    'id': 8,
-    'name': 'CCP Games',
-    'description': text_2    
-  },
-  {
-    'id': 9,
-    'name': 'Sony',
-    'description': text_1   
-  }  
+    {
+        'id': 0,
+        'name': 'Other',
+        'description': text_1
+    },
+    {
+        'id': 1,
+        'name': 'Blizzard Entertainment',
+        'description': text_2
+    },
+    {
+        'id': 2,
+        'name': 'Sega',
+        'description': text_1
+    },
+    {
+        'id': 3,
+        'name': 'CD Projekt RED',
+        'description': text_1
+    },
+    {
+        'id': 4,
+        'name': 'Bethesda Softworks',
+        'description': text_2
+    },
+    {
+        'id': 5,
+        'name': 'Valve Corporation',
+        'description': text_1
+    },
+    {
+        'id': 6,
+        'name': 'Psyonix',
+        'description': text_1
+    },
+    {
+        'id': 7,
+        'name': '2k Games',
+        'description': text_2
+    },
+    {
+        'id': 8,
+        'name': 'CCP Games',
+        'description': text_2
+    },
+    {
+        'id': 9,
+        'name': 'Sony',
+        'description': text_1
+    }
 ]
 
-# Add Publishers
+# Add publishers to DB with information from 'publishers' list
 for pub_info in publishers:
   newPublisher = Publisher(name=pub_info['name'], id=pub_info['id'], description=pub_info['description'])
   session.add(newPublisher)
   session.commit()
   
-# Games
+# Make a list containing game names, descriptions, etc
 games = [
   {
     'name': 'StarCraft2: Wings of Liberty',
@@ -237,34 +252,30 @@ games = [
   
 ]
 
-# Add Games
+# Add games from the 'games' list
 for game in games:
-  rd = game['release_date'].split('-')
-  rd = datetime(int(rd[0]),int(rd[1]),int(rd[2]))
-  md = game['mv_date'].split('-')
-  md = datetime(int(md[0]),int(md[1]),int(md[2]))
+    rd = game['release_date'].split('-')
+    rd = datetime(int(rd[0]),int(rd[1]),int(rd[2]))
+    md = game['mv_date'].split('-')
+    md = datetime(int(md[0]),int(md[1]),int(md[2]))
+    
+    for x in genres:
+        if x[1]==game['genre_id']:
+            genre_name=x[0]
+            break
   
-  for x in genres:
-    if x[1]==game['genre_id']:
-      genre_name=x[0]
-      break
-  
-  for y in publishers:
-    if y['id']==game['publisher_id']:
-      publisher_name=y['name']
-      break
+    for y in publishers:
+        if y['id']==game['publisher_id']:
+            publisher_name=y['name']
+            break
 
-  newGame = Game(name=game['name'],
-    genre_name=genre_name,
-    release_date=rd,
-    publisher_name=publisher_name,
-    rating=game['rating'],
-    description=game['description'],
-    market_value=game['market_value'],
-    mv_date=md,
-    pic_url=game['pic_url'])
-  session.add(newGame)
-  session.commit()
+    newGame = Game(
+        name=game['name'], genre_name=genre_name, release_date=rd,
+        publisher_name=publisher_name, rating=game['rating'],
+        description=game['description'], market_value=game['market_value'],
+        mv_date=md, pic_url=game['pic_url'])
+    session.add(newGame)
+    session.commit()
 
   
 print 'Reached end of file! Database successfully populated!'
