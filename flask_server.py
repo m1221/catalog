@@ -201,8 +201,10 @@ def gdisconnect():
 def viewMain():
     picnumber = random.randint(1,2)
     game = session.query(Game.description).first()
+    # renders public version of this page
     if 'username' not in login_session:
         return render_template('main.html', game=game, picnumber=picnumber)
+    # renders private (user logged in) version of this page
     return render_template('main.html', game=game, username = login_session['username'], picnumber=picnumber)
     
 @app.route('/main/games')
@@ -211,10 +213,12 @@ def viewGames():
     
     genre_names = listNames(Genre)
     pub_names = listNames(Publisher)
-        
+    
+    # renders public version of this page
     if 'username' not in login_session:
         return render_template('view_games.html', games=games, genre_names=genre_names, pub_names=pub_names)
-        
+    
+    # renders private version of this page
     return render_template('view_games.html', games=games, genre_names=genre_names, pub_names=pub_names, username = login_session['username'])
 
 @app.route('/main/games/<string:game_name>/', methods = ['GET', 'POST'])
@@ -225,15 +229,20 @@ def viewGamePage(game_name):
         pic_url = url_for('static', filename='pics/'+game.pic_url)
     else:
         pic_url = url_for('static', filename='pics/'+'placeholder.png')
-        
+    
+    # renders public version of this page
     if 'username' not in login_session:
         return render_template('view_game.html', game=game, pic_url=pic_url)
      
     
     if request.method == 'POST':
+        # the following line requests a token in order to procede with the action of the
+        # post request. I'm not sure if this protects from CSRF attacks
         if login_session['state'] != request.form['CSRFToken']:
             return 'hehehe'
         superUsers = listSuperUsers()
+        # if user is not creator of page OR a superuser, deny post request and
+        # redirect to game page.
         if login_session['email'] != str(game.user_email) and login_session['email'] not in superUsers:
             flash('You are not the creator of this game page. You shall NOT edit it.')
             return redirect(url_for('viewGamePage', game_name=game_name))
@@ -249,19 +258,23 @@ def viewGamePage(game_name):
     
 @app.route('/main/genres/<string:genre_name>/', methods = ['GET', 'POST'])
 def viewGenrePage(genre_name):
- 
     genre = session.query(Genre).filter(Genre.name==genre_name).one()
     games = session.query(Game).filter(Game.genre_name == genre_name).order_by(Game.name).all()
+    
+    # pub_names is provided for the JS manipulations of the game list that 
+    # appears on a genre page
     pub_names = []
     for game in games:
         if game.publisher_name not in pub_names:
             pub_names.append(game.publisher_name)
             pub_names.sort()
     
+    # if user is not logged in, render a page without a token and without certain buttons
     if 'username' not in login_session:
         return render_template('view_genre.html', genre=genre, games=games, pub_names=pub_names)
     
     if request.method == 'POST':
+        # prevents CSRF?
         if login_session['state'] != request.form['CSRFToken']:
             return 'hehehe'     
         if request.form['button'] == 'Delete Genre':
@@ -274,12 +287,16 @@ def viewPubPage(pub_name):
 
     publisher = session.query(Publisher).filter(Publisher.name==pub_name).one()
     games = session.query(Game).filter(Game.publisher_name == pub_name).order_by(Game.name).all()
+    
+    # genre_names is provided for the JS manipulations of the game list that 
+    # appears on a publisher page
     genre_names = []
     for game in games:
         if game.genre_name not in genre_names:
             genre_names.append(game.genre_name)
         genre_names.sort()
- 
+    
+    # if user is not logged in, render a page without a token and without certain buttons
     if 'username' not in login_session:
         return render_template('view_publisher.html', publisher=publisher, games=games,genre_names=genre_names)
         
@@ -294,7 +311,8 @@ def viewPubPage(pub_name):
 @app.route('/main/genres', methods=['GET', 'POST'])
 def viewGenres():
     genre_names = listNames(Genre) 
-  
+    
+    # renders the publish version of this page
     if 'username' not in login_session:
         return render_template('view_genres.html', genre_names=genre_names) 
         
@@ -308,7 +326,8 @@ def viewGenres():
 @app.route('/main/publishers', methods=['GET', 'POST'])
 def viewPublishers():
     pub_names = listNames(Publisher)
-        
+    
+    # renders the public persion of this page
     if 'username' not in login_session:
         return render_template('view_publishers.html', pub_names=pub_names)
         
@@ -332,10 +351,10 @@ def editGame(game_name):
         return redirect(url_for('viewGamePage', game_name=game_name))
   
     if request.method == 'POST':
+        # prevents CSRF ?
         if login_session['state'] != request.form['CSRFToken']:
             return 'hehehe'
-        if login_session['state'] != request.form['CSRFToken']:
-            return 'hehehe'
+        # checks authority of user to commit change
         if login_session['email'] != str(game.user_email) and login_session['email'] not in superUsers:
             flash('You are not the creator of this game page. You shall NOT edit it.')
             return redirect(url_for('viewGamePage', game_name=game_name))
@@ -376,6 +395,7 @@ def editGame(game_name):
         if rqClean('rating'):
             game.rating = rqClean('rating')
         
+        # if there have been changes to a game, commit changes to DB
         if session.dirty:
             session.add(game)
             session.commit()
@@ -384,7 +404,8 @@ def editGame(game_name):
         else:
             flash('No changes saved.')
             return redirect(url_for('editGame', game_name=game_name))
-         
+    
+    # these lists are used for the dropdown select menu    
     genre_names = listNames(Genre)
     pub_names = listNames(Publisher)
     
@@ -426,7 +447,7 @@ def editPublisher(pub_name):
         if publisher_descrip:
             publisher.description = publisher_descrip
         
-        
+        # if there have been changes to a publisher, commit changes to DB
         if session.dirty:
             session.add(publisher)
             session.commit()
@@ -447,6 +468,7 @@ def editPublisher(pub_name):
 
 @app.route('/main/genres/<string:genre_name>/edit/', methods=['GET', 'POST'])
 def editGenre(genre_name):
+    # disallows unauthenticated users from sending 'meaningful' requests to this address
     if 'username' not in login_session:
         return redirect('/login')
     
@@ -457,6 +479,7 @@ def editGenre(genre_name):
         return redirect(url_for('viewGenrePage', genre_name=genre_name))
     
     if request.method == 'POST':
+        # prevents CSRF ?
         if login_session['state'] != request.form['CSRFToken']:
             return 'hehehe'
         if request.form['button'] == 'Delete Genre':
@@ -476,8 +499,7 @@ def editGenre(genre_name):
         genre_descrip = rqClean('description')
         if genre_descrip:
             genre.description = genre_descrip
-        
-        
+         
         if session.dirty:
             session.add(genre)
             session.commit()
@@ -498,10 +520,12 @@ def editGenre(genre_name):
     
 @app.route('/main/newgenre', methods=['GET', 'POST'])
 def newGenre():
+    # disallows unauthenticated users from sending 'meaningful' requests to this address
     if 'username' not in login_session:
         return redirect('/login')
     
     if request.method == 'POST':
+        # prevents CSRF ?
         if login_session['state'] != request.form['CSRFToken']:
             return 'hehehe'
         name = rqClean('name')
@@ -528,10 +552,12 @@ def newGenre():
 
 @app.route('/main/newpublisher', methods=['GET', 'POST'])    
 def newPublisher():
+    # disallows unauthenticated users from sending 'meaningful' requests to this address
     if 'username' not in login_session:
         return redirect('/login') 
 
     if request.method == 'POST':
+        # prevents CSRF ?
         if login_session['state'] != request.form['CSRFToken']:
             return 'hehehe'
         name = rqClean('name')
@@ -558,6 +584,7 @@ def newPublisher():
     
 @app.route('/main/newgame', methods=['GET', 'POST'])
 def newGame():
+    # disallows unauthenticated users from sending 'meaningful' requests to this address
     if 'username' not in login_session:
         return redirect('/login')
         
@@ -567,6 +594,8 @@ def newGame():
         name, rating, genre_name, publisher_name, release_date, market_value, mv_date, description = '','','','', None,'', None,''
         game_names = listNames(Game)
         
+        # check if user sent request with blank field for game name
+        # if yes, then interrupt request and redirect user to newgame page.
         if rqClean('name'):
             if rqClean('name') == '':
                 flash('Game must have a name!')
@@ -641,6 +670,7 @@ def gameXMLHelper(games):
     games_list = [r.serialize for r in games]
     games_string=''
     for game_obj in games_list:
+        # create xml elements and subelements
         game = ET.Element('game', attrib={'genre': game_obj['genre'], 'publisher': game_obj['publisher']})
         name = ET.SubElement(game, 'name')
         description = ET.SubElement(game, 'description')
@@ -649,6 +679,7 @@ def gameXMLHelper(games):
         market_value = ET.SubElement(game, 'market_value')
         mv_date = ET.SubElement(game, 'mv_date')
     
+        # insert text into elements and subelements
         name.text = game_obj['name']
         description.text = game_obj['description']
         release_date.text = game_obj['release_date']
@@ -676,10 +707,12 @@ def genresXML():
     
     genres_string=''
     for genre_obj in genres:
+        # create xml elements and subelements
         genre = ET.Element('genre')
         name = ET.SubElement(genre, 'name')
         description = ET.SubElement(genre, 'description')
-    
+        
+        # insert text into elements and subelements
         name.text = genre_obj['name']
         description.text = genre_obj['description']
 
@@ -694,10 +727,12 @@ def publishersXML():
     
     pub_string=''
     for pub_obj in publishers:
+        # create xml elements and subelements
         pub = ET.Element('publisher')
         name = ET.SubElement(pub, 'name')
         description = ET.SubElement(pub, 'description')
-    
+        
+        # insert text into elements and subelements
         name.text = pub_obj['name']
         description.text = pub_obj['description']
 
@@ -708,18 +743,37 @@ def publishersXML():
     
 # Helper Functions
 def listNames(obj):
+    """Fetches names from a specified Class/'table'
+    
+    Args:
+        obj: a class name from icgb_database_setup.py, eg Game, User, etc
+        
+    Return:
+        A list of names (strings).
+    """
     names = session.query(obj.name).order_by(obj.name).all()
     for i in range(0, len(names)):
         names[i] = str(names[i][0])
     return names
 
 def listSuperUsers():
+    """ Return a list of 'superusers' from the DB """
     superusers = session.query(User.email).filter_by(privilege='superuser').all()
     for i in range(0,len(superusers)):
         superusers[i] = str(superusers[i][0])
     return superusers
     
 def handleDelete(response, obj):
+    """Handles a delete request for genre pages and publisher pages. 
+    
+    Args:
+        response: name(string) of genre or publisher to delete
+        obj: either Genre or Publisher
+    
+    Return:
+        Carries out request and commits transaction to database. Redirects user
+        to genre or publisher page.
+    """
     toDeleteName = response
     superUsers = listSuperUsers()
 
