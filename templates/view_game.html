@@ -6,7 +6,7 @@
 
 {% block content %}
 <!-- MAIN BOX-->
-<form action="{{ url_for('newGame') }}" method='post' enctype='multipart/form-data' id='form1'>
+<form action="{{ url_for('viewGamePage', game_name=game.name) }}" method='post' enctype='multipart/form-data' id='form1'>
 <div class='row'>
   <!--IMAGE BOX-->
   <div class='col30 image-box' style='height: 40em; position: relative;'>
