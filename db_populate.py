@@ -29,9 +29,8 @@ text_2 ='At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditi
 # For the ability to add/edit/delete data from the database regardless of who
 # entered the data, set the user to a superuser by setting "privilege='superuser'"
 superuser = User(name='Mario Portocarrero', email='m.portocarrero.jr@gmail.com', privilege='superuser')
-if session.dirty:
-    session.add(superuser)
-    session.commit()
+session.add(superuser)
+session.commit()
 
 # Make list containing genre names, descriptions, and ids
 genres = [['RTS',1, text_1], ['RPG',2, text_2], ['FPS',3, text_2],
