@@ -640,7 +640,7 @@ def editGenre(genre_name):
                             STATE = login_session['state'])
 
 
-@app.route('/main/publisher/<string:pub_name>/edit/', methods=['GET', 'POST'])
+@app.route('/main/publishers/<string:pub_name>/edit/', methods=['GET', 'POST'])
 def editPublisher(pub_name):
     """(GET) Takes the user to a edit-publisher page. (POST) Edits a publisher in the DB.
 
@@ -1109,21 +1109,16 @@ def handleDelete(obj_name, obj_class):
         flash('You cannot delete "Other."')
         return redirect('/main/'+obj_class.__tablename__+'s/'+toDeleteName)    
     
-    # This if-elif statement updates the genre_name/publisher_name values of
+    # The following code block updates the genre_name/publisher_name values of
     # the game object if these values no longer exist in the Genre/Publisher
     # tables. Values are updated to "other"
-    if obj_class.__tablename__ == 'publisher':
-        games = session.query(Game).filter(Game.publisher_name==toDeleteName).all()
-        for game in games:
-            game.publisher_name = "Other"
-            session.add(game)
-            session.commit()
-    elif obj_class.__tablename__ == 'genre':
-        games = session.query(Game).filter(Game.genre_name==toDeleteName).all()
-        for game in games:
-            game.genre_name = "Other"
-            session.add(game)
-            session.commit()
+    t_name = obj_class.__tablename__
+    conn = engine.connect()
+    stmt = text("UPDATE game "
+                "SET %s_name='%s' "
+                "WHERE %s_name='%s'" % (t_name,'Other', t_name, toDeleteName))
+    result = conn.execute(stmt)
+    result.close()
             
     toDelete = session.query(obj_class).filter(obj_class.name==toDeleteName).all()[0]
     session.delete(toDelete)
