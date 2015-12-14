@@ -12,6 +12,7 @@ Features of the web application (html, css, and server module) include:
     -Responsive Design for mobile, tablet, and pc/laptop
     -Jinja2 templates to simplify modification to HTML files
     -CSRF defense via Flask-SeaSurf
+        -https://flask-seasurf.readthedocs.org/en/latest/
 
 For more information regarding the use of the Flask Framework please review the
 Flask and Jinja2 documentation.
@@ -26,7 +27,6 @@ requirement for the Catalog project.
 import os
 from datetime import datetime
 from flask import Flask, render_template, url_for, request, redirect, flash, jsonify
-app = Flask(__name__)
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -44,11 +44,15 @@ import json
 import requests
 
 # Security Imports
-import bleach #
-from werkzeug import secure_filename #
+import bleach # to sanitize user text input
+from werkzeug import secure_filename # to sanitize user file upload
+from flask.ext.seasurf import SeaSurf
 
 # XML endpoint import
 import xml.etree.ElementTree as ET
+
+app = Flask(__name__)
+csrf = SeaSurf(app)
 
 ### END IMPORTS
 
@@ -82,6 +86,7 @@ CLIENT_ID = json.loads(
     open('client_secrets.json', 'r').read())['web']['client_id']
 APPLICATION_NAME = 'ICGDB'
 
+@csrf.exempt
 @app.route('/login')
 def showLogin():
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
@@ -89,6 +94,7 @@ def showLogin():
     login_session['state'] = state
     return render_template('login.html', STATE = state)
 
+@csrf.exempt    
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
     if request.args.get('state') != login_session['state']:
@@ -165,7 +171,8 @@ def gconnect():
     flash("You are now logged in as %s." % login_session['username'])
     print "done!"
     return output
-
+    
+@csrf.exempt
 @app.route('/gdisconnect')
 def gdisconnect():
     # only disconnect a connected user
@@ -229,6 +236,7 @@ def gdisconnect():
 # newGenre() : create a genre game page : 'GET', POST'
 # newPublisher() : create a new publisher page: 'GET', POST'
 
+@csrf.exempt
 @app.route('/')
 @app.route('/main/')
 def viewMain():
@@ -247,7 +255,8 @@ def viewMain():
     return render_template('main.html', game=game,
                             username = login_session['username'],
                             picnumber=picnumber)
-    
+
+@csrf.exempt                            
 @app.route('/main/games')
 def viewGames():
     """Takes the user a page with a list of the games in the DB.
@@ -286,10 +295,7 @@ def viewGenres():
     if 'username' not in login_session:
         return render_template('view_genres.html', genre_names=genre_names) 
         
-    if request.method == 'POST':
-        if login_session['state'] != request.form['CSRFToken']:
-            return 'hehehe'
-            
+    if request.method == 'POST':            
         if checkAuthor(rqClean('name'), Genre): # checks if user is authorized to make changes
             return redirect('/main/'+Genre.__tablename__+'s')
             
@@ -314,10 +320,7 @@ def viewPublishers():
     if 'username' not in login_session:
         return render_template('view_publishers.html', pub_names=pub_names)
         
-    if request.method == 'POST':
-        if login_session['state'] != request.form['CSRFToken']:
-            return 'hehehe'
-            
+    if request.method == 'POST':            
         if checkAuthor(rqClean('name'), Publisher): # checks if user is authorized to make changes
             return redirect('/main/'+Publisher.__tablename__+'s')        
         
@@ -347,13 +350,7 @@ def viewGamePage(game_name):
         return render_template('view_game.html', game=game, pic_url=pic_url)
      
     
-    if request.method == 'POST':
-        # the following line requests a token in order to procede with the
-        # action of the post request. I'm not sure if this protects from CSRF
-        # attacks
-        if login_session['state'] != request.form['CSRFToken']:
-            return 'hehehe'
-            
+    if request.method == 'POST':  
         if checkAuthor(game_name, Game):
             return redirect('/main/'+Game.__tablename__+'s/'+game_name)
             
@@ -393,10 +390,6 @@ def viewGenrePage(genre_name):
                                 pub_names=pub_names)
     
     if request.method == 'POST':
-        # prevents CSRF?
-        if login_session['state'] != request.form['CSRFToken']:
-            return 'hehehe'
-
         if checkAuthor(genre_name, Genre): # checks if user is authorized to make changes
             return redirect('/main/'+Genre.__tablename__+'s/'+genre_name)
             
@@ -433,10 +426,7 @@ def viewPubPage(pub_name):
         return render_template('view_publisher.html', publisher=publisher,
                                 games=games,genre_names=genre_names)
         
-    if request.method == 'POST':
-        if login_session['state'] != request.form['CSRFToken']:
-            return 'hehehe'
-            
+    if request.method == 'POST':            
         if checkAuthor(pub_name, Publisher): # checks if user is authorized to make changes
             return redirect('/main/'+Publisher.__tablename__+'s/'+pub_name)
             
@@ -484,11 +474,7 @@ def editGame(game_name):
     if checkAuthor(game_name, Game): # checks if user is authorized to make changes
             return redirect('/main/'+Game.__tablename__+'s/'+game_name)
   
-    if request.method == 'POST':
-        # prevents CSRF ?
-        if login_session['state'] != request.form['CSRFToken']:
-            return 'hehehe'
-      
+    if request.method == 'POST':      
         if request.form['button'] == 'Delete Game':
             name = game.name
             session.delete(game)
@@ -586,9 +572,6 @@ def editGenre(genre_name):
             return redirect('/main/'+Genre.__tablename__+'s/'+genre_name)
     
     if request.method == 'POST':
-        # prevents CSRF ?
-        if login_session['state'] != request.form['CSRFToken']:
-            return 'hehehe'
         if request.form['button'] == 'Delete Genre':
             return handleDelete(genre.name, Genre)
 
@@ -676,8 +659,6 @@ def editPublisher(pub_name):
         return redirect('/main/'+Publisher.__tablename__+'s/'+pub_name)
     
     if request.method == 'POST':
-        if login_session['state'] != request.form['CSRFToken']:
-            return 'hehehe'
         if request.form['button'] == 'Delete Publisher':
             return handleDelete(publisher.name, Publisher)
 
@@ -755,8 +736,6 @@ def newGame():
         return redirect('/login')
         
     if request.method == 'POST':
-        if login_session['state'] != request.form['CSRFToken']:
-            return 'hehehe'
         name, rating, genre_name, publisher_name = '', '', '', ''
         release_date, market_value, mv_date = None, '', None
         description = ''
@@ -837,9 +816,6 @@ def newGenre():
         return redirect('/login')
     
     if request.method == 'POST':
-        # prevents CSRF ?
-        if login_session['state'] != request.form['CSRFToken']:
-            return 'hehehe'
         name = rqClean('name')
         if name:
             if name in listNames(Genre):
@@ -891,9 +867,6 @@ def newPublisher():
         return redirect('/login') 
 
     if request.method == 'POST':
-        # prevents CSRF ?
-        if login_session['state'] != request.form['CSRFToken']:
-            return 'hehehe'
         name = rqClean('name')
         if name:
             if name in listNames(Publisher):
