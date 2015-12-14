@@ -12,11 +12,19 @@ GitHub: m1221
 1. static/pics (multiple image files)
 1. templates/ (multiple html files)
 
-## Instructions for running:
+## Instructions for setup:
+1. Install Flask-SeaSurf
+  * For those with PIP
+    * `$ pip install flask-seasurf
+  * For those without PIP
+    * `$ easy_insall flask-seasurf`
 1. For Google SignIn, access Google Developers Console and create a project according to Udacity's guidelines.
 1. Download the JSON file from the Developers Console and move this file into Catalog directory.
 1. Change its name to 'client_secrets.json'
 1. Go to login_html and change the value of 'data-clientid' attribute to the client-id found in the client_secrets.json file
+1. Go to db_populate.py, read lines ~28-34 regarding the use of a 'superuser'
+
+## Instructions for running:
 1. In GitBash, cd to Udacity prepared Vagrant directory
 1. Launch VM by VirtualBox configured with Vagrant
   `$vagrant up`
@@ -27,9 +35,8 @@ GitHub: m1221
   `$python icgdb_database_setup.py`
 1. Populate the database
   `$python db_populate.py`
-  * before running db_populate.py, read lines ~28-34 regarding the use of a 'superuser'
 1. Serve the application
-  ~$python flask_server.py`
+  `$python flask_server.py`
 1. Open your browser and access the page via localhost:5000/ 
 
 ## This project has the following extra credit functionality:

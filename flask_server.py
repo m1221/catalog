@@ -6,8 +6,12 @@ Computer Game Database (ICGDB) web application.
 Features of the web application (html, css, and server module) include:
     -3rd party Oauth via GooglePlus
     -JSON and XML endpoints
-    -Design for mobile, tablet, and pc/laptop
+        - JSON and XML endpoints exists for Games, Game, Genres, and Publishers pages
+        - to access an endpoint, add 'JSON' or 'XML' to the end of the url of a page
+            eg: localhost:5000/main/publishers/XML
+    -Responsive Design for mobile, tablet, and pc/laptop
     -Jinja2 templates to simplify modification to HTML files
+    -CSRF defense via Flask-SeaSurf
 
 For more information regarding the use of the Flask Framework please review the
 Flask and Jinja2 documentation.
@@ -201,14 +205,44 @@ def gdisconnect():
 
 ### BEGIN PAGE ROUTING
 
+# ORGANIZATION OF FUNCTIONS
+#--------------------------------------------#
+
+# functionName() : brief description [: 'GET', 'POST' ]
+#
+#
+# viewMain() : home page
+#
+# viewGames() : a list of games
+# viewGenres() : a list of genres : 'GET', POST'
+# viewPublishers() : a list of publishers : 'GET', POST'
+#
+# viewGamePage() : view the page of a game : 'GET', POST'
+# viewGenrePage() : view the page of a genre : 'GET', POST'
+# viewPubPage() : view the page of a publisher: 'GET', POST'
+# 
+# editGame() : view/change the page of a game : 'GET', POST'
+# editGenre() : view/change the page of a genre : 'GET', POST'
+# editPublisher() : view/change the page of a publisher: 'GET', POST'
+#
+# newGame() : create a new game page : 'GET', POST'
+# newGenre() : create a genre game page : 'GET', POST'
+# newPublisher() : create a new publisher page: 'GET', POST'
+
 @app.route('/')
 @app.route('/main/')
 def viewMain():
+    """Takes the user to the home page.
+    
+    If the user is logged in, render the html template with the drop-down buttons.
+    """
     picnumber = random.randint(1,2)
     game = session.query(Game.description).first()
+    
     # renders public version of this page
     if 'username' not in login_session:
         return render_template('main.html', game=game, picnumber=picnumber)
+        
     # renders private (user logged in) version of this page
     return render_template('main.html', game=game,
                             username = login_session['username'],
@@ -216,6 +250,11 @@ def viewMain():
     
 @app.route('/main/games')
 def viewGames():
+    """Takes the user a page with a list of the games in the DB.
+    
+    If the user is logged in, render the html template with the drop-down buttons
+    in the nav bar.
+    """
     games = session.query(Game).order_by(Game.name).all()
     
     genre_names = listNames(Genre)
@@ -232,8 +271,70 @@ def viewGames():
                             genre_names=genre_names, pub_names=pub_names,
                             username = login_session['username'])
 
+
+@app.route('/main/genres', methods=['GET', 'POST'])
+def viewGenres():
+    """Takes the user to a page with a list of the genres in the DB. GET and POST
+    
+    If the user is logged in, render a page with:
+        Drop-down buttons in the nav-bar
+        Edit and delete buttons for each publisher
+    """
+    genre_names = listNames(Genre) 
+    
+    # renders the public version of this page
+    if 'username' not in login_session:
+        return render_template('view_genres.html', genre_names=genre_names) 
+        
+    if request.method == 'POST':
+        if login_session['state'] != request.form['CSRFToken']:
+            return 'hehehe'
+            
+        if checkAuthor(rqClean('name'), Genre): # checks if user is authorized to make changes
+            return redirect('/main/'+Genre.__tablename__+'s')
+            
+        return handleDelete(rqClean('name'), Genre)
+
+    return render_template('view_genres.html', genre_names=genre_names,
+                            username = login_session['username'],
+                            STATE = login_session['state'])
+
+ 
+@app.route('/main/publishers', methods=['GET', 'POST'])
+def viewPublishers():
+    """Takes the user to a page with a list of the publishers in the DB. GET and POST
+    
+    If the user is logged in, render a page with:
+        Drop-down buttons in the nav-bar
+        Edit and delete buttons for each publisher
+    """
+    pub_names = listNames(Publisher)
+    
+    # renders the public persion of this page
+    if 'username' not in login_session:
+        return render_template('view_publishers.html', pub_names=pub_names)
+        
+    if request.method == 'POST':
+        if login_session['state'] != request.form['CSRFToken']:
+            return 'hehehe'
+            
+        if checkAuthor(rqClean('name'), Publisher): # checks if user is authorized to make changes
+            return redirect('/main/'+Publisher.__tablename__+'s')        
+        
+        return handleDelete(request.form['name'], Publisher)
+        
+    return render_template('view_publishers.html', pub_names=pub_names,
+                            username = login_session['username'],
+                            STATE = login_session['state'])                            
+                            
 @app.route('/main/games/<string:game_name>/', methods = ['GET', 'POST'])
 def viewGamePage(game_name):
+    """Takes the user to a game's page. GET and POST
+    
+    If the user is logged in, render a page with: 
+        Drop-down buttons in the nav-bar
+        Edit and delete buttons 
+    """
     game = session.query(Game).filter(Game.name==game_name).one()
 
     if game.pic_url:
@@ -269,6 +370,12 @@ def viewGamePage(game_name):
     
 @app.route('/main/genres/<string:genre_name>/', methods = ['GET', 'POST'])
 def viewGenrePage(genre_name):
+    """Takes the user to a genre's page. GET and POST
+    
+    If the user is logged in, render a page with:
+        Drop-down buttons in the nav-bar
+        Edit and delete buttons 
+    """
     genre = session.query(Genre).filter(Genre.name==genre_name).one()
     games = session.query(Game).filter(Game.genre_name == genre_name).order_by(Game.name).all()
     
@@ -303,7 +410,12 @@ def viewGenrePage(genre_name):
 
 @app.route('/main/publishers/<string:pub_name>/', methods = ['GET', 'POST'])
 def viewPubPage(pub_name):
-
+    """Takes the user to a publisher's page. GET and POST
+    
+    If the user is logged in, render a page with:
+        Drop-down buttons in the nav-bar
+        Edit and delete buttons 
+    """
     publisher = session.query(Publisher).filter(Publisher.name==pub_name).one()
     games = session.query(Game).filter(Game.publisher_name == pub_name).order_by(Game.name).all()
     
@@ -336,50 +448,34 @@ def viewPubPage(pub_name):
                             username = login_session['username'],
                             STATE = login_session['state'])
   
-@app.route('/main/genres', methods=['GET', 'POST'])
-def viewGenres():
-    genre_names = listNames(Genre) 
-    
-    # renders the public version of this page
-    if 'username' not in login_session:
-        return render_template('view_genres.html', genre_names=genre_names) 
-        
-    if request.method == 'POST':
-        if login_session['state'] != request.form['CSRFToken']:
-            return 'hehehe'
-            
-        if checkAuthor(rqClean('name'), Genre): # checks if user is authorized to make changes
-            return redirect('/main/'+Genre.__tablename__+'s')
-            
-        return handleDelete(rqClean('name'), Genre)
-
-    return render_template('view_genres.html', genre_names=genre_names,
-                            username = login_session['username'],
-                            STATE = login_session['state'])
-
-@app.route('/main/publishers', methods=['GET', 'POST'])
-def viewPublishers():
-    pub_names = listNames(Publisher)
-    
-    # renders the public persion of this page
-    if 'username' not in login_session:
-        return render_template('view_publishers.html', pub_names=pub_names)
-        
-    if request.method == 'POST':
-        if login_session['state'] != request.form['CSRFToken']:
-            return 'hehehe'
-            
-        if checkAuthor(rqClean('name'), Publisher): # checks if user is authorized to make changes
-            return redirect('/main/'+Publisher.__tablename__+'s')        
-        
-        return handleDelete(request.form['name'], Publisher)
-        
-    return render_template('view_publishers.html', pub_names=pub_names,
-                            username = login_session['username'],
-                            STATE = login_session['state'])
   
 @app.route('/main/games/<string:game_name>/edit/', methods=['GET', 'POST'])
 def editGame(game_name):
+    """(GET) Takes the user to an edit-game page. (POST) Edits a game in the DB.
+
+    Requirement: In order to view this page, the user must be logged in as the
+    the page's creator OR as a 'superuser'.
+    
+    (GET)
+    Render a page with:
+        Drop-down buttons in the nav-bar.
+        Text fields.
+        Drop-down select bar.
+        A file-upload button.
+        'Save Changes' and 'Delete' buttons.
+    
+    (POST)
+    Checks if game name already exists in DB.
+        If it does exist, then stops the creation of new page by redirecting user
+        to new-game page
+    Checks if each field of the form has input.
+        If a field has input, make a change to a database.
+        If a field doesn't have input, add a preset value for the corresponding
+        column of the game object.
+    Adds a game to the DB.
+    Returns user to Games page.
+    """
+    # prevents a user from accessing this page if the user is not logged in
     if 'username' not in login_session:
         return redirect('/login')
   
@@ -452,8 +548,125 @@ def editGame(game_name):
                             username = login_session['username'],
                             STATE = login_session['state'])
 
+
+
+@app.route('/main/genres/<string:genre_name>/edit/', methods=['GET', 'POST'])
+def editGenre(genre_name):
+    """(GET) Takes the user to an edit-genre page. (POST) Edits a genre in the DB.
+
+    Requirement: In order to view this page, the user must be logged in as the
+    the page's creator OR as a 'superuser'.
+    
+    (GET)
+    Render a page with:
+        Drop-down buttons in the nav-bar.
+        Text fields.
+        'Save Changes' and 'Delete' buttons.
+        A list of games related to this genre.
+    
+    (POST)
+    Checks if genre name already exists in DB.
+        If it does exist, then stops the creation of new page by redirecting user
+        to new-genre page
+    Checks if each field of the form has input.
+        If a field has input, make a change to a database.
+        If a field doesn't have input, add a preset value for the corresponding
+        column of the genre object.
+    Adds a genre to the DB.
+    Returns user to Genres page.
+    """
+    
+    # prevents a user from accessing this page if the user is not logged in
+    if 'username' not in login_session:
+        return redirect('/login')
+    
+    genre = session.query(Genre).filter(Genre.name==genre_name).one()
+    
+    if checkAuthor(genre_name, Genre): # checks if user is authorized to make changes
+            return redirect('/main/'+Genre.__tablename__+'s/'+genre_name)
+    
+    if request.method == 'POST':
+        # prevents CSRF ?
+        if login_session['state'] != request.form['CSRFToken']:
+            return 'hehehe'
+        if request.form['button'] == 'Delete Genre':
+            return handleDelete(genre.name, Genre)
+
+        if request.form['button'] != 'Save Changes':
+            return redirect(url_for('viewGenrePage', genre_name=genre_name))
+        
+        name = rqClean('name')
+        if name:
+            if name in listNames(Genre):
+                flash('Name already taken! "%s" NOT created!' % name)
+                return redirect('/main/newgenre')
+            else:
+                old_name = genre.name
+                genre.name = name
+        
+        genre_descrip = rqClean('description')
+        if genre_descrip:
+            genre.description = genre_descrip
+         
+        if session.dirty:
+            session.add(genre)
+            session.commit()
+            flash('Genre successfully edited.')
+            
+            # update game table to reflect name change
+            if name:
+                conn = engine.connect()
+                stmt = text("UPDATE game "
+                        "SET genre_name='%s' "
+                        "WHERE genre_name='%s'" % (name, old_name))
+                result = conn.execute(stmt)
+                result.close()
+            
+            return redirect(url_for('viewGenrePage', genre_name=genre.name))
+        else:
+            flash('No changes saved.')
+            return redirect(url_for('editGenre', genre_name=genre.name))
+            
+    games = session.query(Game).filter(Game.genre_name == genre_name).order_by(Game.name).all()    
+    pub_names = []
+    for game in games:
+        if game.publisher_name not in pub_names:
+            pub_names.append(game.publisher_name)
+        pub_names.sort()
+
+    return render_template('edit_genre.html', games=games, genre=genre,
+                            pub_names=pub_names,
+                            username = login_session['username'],
+                            STATE = login_session['state'])
+
+
 @app.route('/main/publisher/<string:pub_name>/edit/', methods=['GET', 'POST'])
 def editPublisher(pub_name):
+    """(GET) Takes the user to a edit-publisher page. (POST) Edits a publisher in the DB.
+
+    Requirement: In order to view this page, the user must be logged in as the
+    the page's creator OR as a 'superuser'.
+    
+    (GET)
+    Render a page with:
+        Drop-down buttons in the nav-bar.
+        Text fields.
+        'Save Changes' and 'Delete' buttons.
+        A list of games produced by this publisher.
+    
+    (POST)
+    Checks if publisher name already exists in DB.
+        If it does exist, then stops the creation of new page by redirecting user
+        to new-publisher page
+    Checks if each field of the form has input.
+        If a field has input, make a change to a database.
+        If a field doesn't have input, add a preset value for the corresponding
+        column of the publisher object.
+    Adds a publisher to the DB.
+    Returns user to Publishers page.
+    """
+    
+    # prevents a user from accessing page if the user is not logged in.
     if 'username' not in login_session:
         return redirect('/login')
     
@@ -516,148 +729,28 @@ def editPublisher(pub_name):
                             username = login_session['username'],
                             STATE = login_session['state'])
 
-@app.route('/main/genres/<string:genre_name>/edit/', methods=['GET', 'POST'])
-def editGenre(genre_name):
-    # disallows unauthenticated users from sending 'meaningful' requests
-    # to this address
-    if 'username' not in login_session:
-        return redirect('/login')
-    
-    genre = session.query(Genre).filter(Genre.name==genre_name).one()
-    
-    if checkAuthor(genre_name, Genre): # checks if user is authorized to make changes
-            return redirect('/main/'+Genre.__tablename__+'s/'+genre_name)
-    
-    if request.method == 'POST':
-        # prevents CSRF ?
-        if login_session['state'] != request.form['CSRFToken']:
-            return 'hehehe'
-        if request.form['button'] == 'Delete Genre':
-            return handleDelete(genre.name, Genre)
 
-        if request.form['button'] != 'Save Changes':
-            return redirect(url_for('viewGenrePage', genre_name=genre_name))
-        
-        name = rqClean('name')
-        if name:
-            if name in listNames(Genre):
-                flash('Name already taken! "%s" NOT created!' % name)
-                return redirect('/main/newgenre')
-            else:
-                old_name = genre.name
-                genre.name = name
-        
-        genre_descrip = rqClean('description')
-        if genre_descrip:
-            genre.description = genre_descrip
-         
-        if session.dirty:
-            session.add(genre)
-            session.commit()
-            flash('Genre successfully edited.')
-            
-            # update game table to reflect name change
-            if name:
-                conn = engine.connect()
-                stmt = text("UPDATE game "
-                        "SET genre_name='%s' "
-                        "WHERE genre_name='%s'" % (name, old_name))
-                result = conn.execute(stmt)
-                result.close()
-            
-            return redirect(url_for('viewGenrePage', genre_name=genre.name))
-        else:
-            flash('No changes saved.')
-            return redirect(url_for('editGenre', genre_name=genre.name))
-            
-    games = session.query(Game).filter(Game.genre_name == genre_name).order_by(Game.name).all()    
-    pub_names = []
-    for game in games:
-        if game.publisher_name not in pub_names:
-            pub_names.append(game.publisher_name)
-        pub_names.sort()
-
-    return render_template('edit_genre.html', games=games, genre=genre,
-                            pub_names=pub_names,
-                            username = login_session['username'],
-                            STATE = login_session['state'])
-    
-@app.route('/main/newgenre', methods=['GET', 'POST'])
-def newGenre():
-    # disallows unauthenticated users from sending 'meaningful' requests
-    # to this address
-    if 'username' not in login_session:
-        return redirect('/login')
-    
-    if request.method == 'POST':
-        # prevents CSRF ?
-        if login_session['state'] != request.form['CSRFToken']:
-            return 'hehehe'
-        name = rqClean('name')
-        if name:
-            if name in listNames(Genre):
-                flash('Name already taken! "%s" NOT created!' % name)
-                return redirect('/main/newgenre')
-        else:
-            flash('Genre must have a name!')
-            return redirect('/main/newgenre')
-        
-        description = rqClean('description')
-
-        # if rqClean('description'):
-        # description = rqClean('description')
-        genre = Genre(name=name, user_email=login_session['email'],
-                      description=description)
-        session.add(genre)
-        session.commit()
-        flash('"%s" was successfully created!' % name)
-        
-        return redirect(url_for('viewGenres'))
-            
-    return render_template('new_genre.html',
-                            username = login_session['username'],
-                            STATE = login_session['state'])
-
-@app.route('/main/newpublisher', methods=['GET', 'POST'])    
-def newPublisher():
-    # disallows unauthenticated users from sending 'meaningful' requests
-    # to this address
-    if 'username' not in login_session:
-        return redirect('/login') 
-
-    if request.method == 'POST':
-        # prevents CSRF ?
-        if login_session['state'] != request.form['CSRFToken']:
-            return 'hehehe'
-        name = rqClean('name')
-        if name:
-            if name in listNames(Publisher):
-                flash('Name already taken! "%s" NOT created!' % rqClean('name'))
-                return redirect('/main/newpublisher')
-        else:
-            flash('Publisher must have a name!')
-            return redirect('/main/newpublisher')
-            
-        description = rqClean('description')
-
-        # if rqClean('description'):
-        # description = rqClean('description')
-        pub = Publisher(name=name, user_email=login_session['email'],
-                        description=description)
-        session.add(pub)
-        session.commit()
-        flash('"%s" was successfully created!' % name)
-        
-        return redirect(url_for('viewPublishers'))
-    
-    return render_template('new_publisher.html',
-                            username = login_session['username'],
-                            STATE = login_session['state'])
-    
 @app.route('/main/newgame', methods=['GET', 'POST'])
 def newGame():
-    # disallows unauthenticated users from sending 'meaningful' requests
-    # to this address
+    """(GET) Takes the user to a new-game page. (POST) Enters a new game into the DB.
+
+    Requirement: A user must be logged in to view this page.
+    
+    (GET)
+    Render a page with:
+        Drop-down buttons in the nav-bar.
+        A 'Save Changes' button.
+    
+    (POST)
+    Checks if game name already exists in DB.
+        If it does exist, then stops the creation of new page by redirecting user
+        to new-game page
+    Checks if each field of the form has input.
+        If a field has input, make a change to a database.
+        If a field doesn't have input, add a preset value for the corresponding
+        column of the game object.
+    Adds a game to the DB.
+    """
     if 'username' not in login_session:
         return redirect('/login')
         
@@ -717,28 +810,140 @@ def newGame():
     return render_template('new_game.html', genre_names=genre_names,
                             pub_names=pub_names,
                             username = login_session['username'],
+                            STATE = login_session['state'])                            
+@app.route('/main/newgenre', methods=['GET', 'POST'])
+def newGenre():
+    """(GET) Takes the user to a new-genre page. (POST) Enters a new genre into the DB.
+
+    Requirement: A user must be logged in to view this page.
+    
+    (GET)
+    Render a page with:
+        Drop-down buttons in the nav-bar.
+        A 'Save Changes' button.
+    
+    (POST)
+    Checks if genre name already exists in DB.
+        If it does exist, then stops the creation of new page by redirecting user
+        to new-genre page
+    Checks if each field of the form has input.
+        If a field has input, make a change to a database.
+        If a field doesn't have input, add a preset value for the corresponding
+        column of the genre object.
+    Adds a genre to the DB.
+    """
+    # prevents an unauthenticated user from accessing this function
+    if 'username' not in login_session:
+        return redirect('/login')
+    
+    if request.method == 'POST':
+        # prevents CSRF ?
+        if login_session['state'] != request.form['CSRFToken']:
+            return 'hehehe'
+        name = rqClean('name')
+        if name:
+            if name in listNames(Genre):
+                flash('Name already taken! "%s" NOT created!' % name)
+                return redirect('/main/newgenre')
+        else:
+            flash('Genre must have a name!')
+            return redirect('/main/newgenre')
+        
+        description = rqClean('description')
+
+        # if rqClean('description'):
+        # description = rqClean('description')
+        genre = Genre(name=name, user_email=login_session['email'],
+                      description=description)
+        session.add(genre)
+        session.commit()
+        flash('"%s" was successfully created!' % name)
+        
+        return redirect(url_for('viewGenres'))
+            
+    return render_template('new_genre.html',
+                            username = login_session['username'],
                             STATE = login_session['state'])
- 
+
+@app.route('/main/newpublisher', methods=['GET', 'POST'])    
+def newPublisher():
+    """(GET) Takes the user to a new-publisher page. (POST) Enters a new publisher into the DB.
+
+    Requirement: A user must be logged in to view this page.
+    
+    (GET)
+    Render a page with:
+        Drop-down buttons in the nav-bar.
+        A 'Save Changes' button.
+    
+    (POST)
+    Checks if publisher name already exists in DB.
+        If it does exist, then stops the creation of new page by redirecting user
+        to new-publisher page
+    Checks if each field of the form has input.
+        If a field has input, make a change to a database.
+        If a field doesn't have input, add a preset value for the corresponding
+        column of the publisher object.
+    Adds a publisher to the DB.
+    """
+    # prevents an unauthenticated user from accessing this function
+    if 'username' not in login_session:
+        return redirect('/login') 
+
+    if request.method == 'POST':
+        # prevents CSRF ?
+        if login_session['state'] != request.form['CSRFToken']:
+            return 'hehehe'
+        name = rqClean('name')
+        if name:
+            if name in listNames(Publisher):
+                flash('Name already taken! "%s" NOT created!' % rqClean('name'))
+                return redirect('/main/newpublisher')
+        else:
+            flash('Publisher must have a name!')
+            return redirect('/main/newpublisher')
+            
+        description = rqClean('description')
+
+        # if rqClean('description'):
+        # description = rqClean('description')
+        pub = Publisher(name=name, user_email=login_session['email'],
+                        description=description)
+        session.add(pub)
+        session.commit()
+        flash('"%s" was successfully created!' % name)
+        
+        return redirect(url_for('viewPublishers'))
+    
+    return render_template('new_publisher.html',
+                            username = login_session['username'],
+                            STATE = login_session['state'])
+    
+
  
 ### BEGIN JSON ENDPOINTS
 
 @app.route('/main/games/<string:game_name>/JSON')
 def gameJSON(game_name):
+    """Displays a game's information in JSON format."""
     game = session.query(Game).filter_by(name=game_name).one()
     return jsonify(game=game.serialize)
 
 @app.route('/main/games/JSON')
 def gamesJSON():
+    """Displays the DB's games' information in JSON format."""
     games=session.query(Game).all()
     return jsonify(games=[r.serialize for r in games])
     
 @app.route('/main/genres/JSON')
 def genresJSON():
+    """Displays the DB's genres' names and descriptions in JSON format."""
     genres=session.query(Genre).all()
     return jsonify(genres=[i.serialize for i in genres])
 
 @app.route('/main/publishers/JSON')
 def publishersJSON():
+    """Displays the DB's publishers' names and descriptions in JSON format."""
     publishers=session.query(Genre).all()
     return jsonify(publishers=[i.serialize for i in publishers])    
     
@@ -746,6 +951,14 @@ def publishersJSON():
 ### BEGIN XML Endpoints
 
 def gameXMLHelper(games):
+    """This is a helper function for gameXML and gamesXML.
+    
+    Arguments:
+        games: a list containing Game objects.
+    
+    Returns:
+        Returns an XML-formatted string carrying game(s) information.
+    """
     games_list = [r.serialize for r in games]
     games_string=''
     for game_obj in games_list:
@@ -772,16 +985,19 @@ def gameXMLHelper(games):
 
 @app.route('/main/games/<string:game_name>/XML')
 def gameXML(game_name):
+    """Displays a game's information in XML format."""
     game = [session.query(Game).filter_by(name=game_name).one()]
     return gameXMLHelper(game)
 
 @app.route('/main/games/XML')
 def gamesXML():
+    """Displays the DB's games' information in XML format."""
     games=session.query(Game).all()
     return gameXMLHelper(games)
     
 @app.route('/main/genres/XML')
 def genresXML():
+    """Displays the DB's genres' names and descriptions in XML format."""
     genres=session.query(Genre).all()
     genres=[i.serialize for i in genres]
     
@@ -802,6 +1018,7 @@ def genresXML():
 
 @app.route('/main/publishers/XML')
 def publishersXML():
+    """Displays the DB's publishers' names and descriptions in XML format."""
     publishers=session.query(Publisher).all()
     publishers=[i.serialize for i in publishers]
     
@@ -821,7 +1038,8 @@ def publishersXML():
     return pub_string
 #END XML Endpoints
     
-# Helper Functions
+###  Helper Functions
+
 def listNames(obj):
     """Fetches names from a specified Class/'table'
     
@@ -844,14 +1062,15 @@ def listSuperUsers():
     return superusers
 
 def checkAuthor(obj_name, obj_class):
-    """Handles authorization DB-alterting actions.
+    """Determines if a user has the authority to make a change.
     
     Args:
         obj_name: name(string) of genre, publisher, or game to delete
         obj_class: Genre, Publisher, or Game
     
     Returns:
-    
+        Returns True if a user is NOT authorized to make a change. 
+        Returns False if a user IS authorized to make a change.
     """
     toDeleteName = obj_name
     superUsers = listSuperUsers()
@@ -881,11 +1100,18 @@ def handleDelete(obj_name, obj_class):
     """
     toDeleteName = obj_name
     superUsers = listSuperUsers()
-
+    
+    # prevents 'Other' from being deleted.
+    # 'Other' is important because when a genre/publisher is deleted, the
+    # games with those genre/publishers are updated to have "Other" as their
+    # genre/publisher
     if toDeleteName == 'Other':
         flash('You cannot delete "Other."')
         return redirect('/main/'+obj_class.__tablename__+'s/'+toDeleteName)    
-
+    
+    # This if-elif statement updates the genre_name/publisher_name values of
+    # the game object if these values no longer exist in the Genre/Publisher
+    # tables. Values are updated to "other"
     if obj_class.__tablename__ == 'publisher':
         games = session.query(Game).filter(Game.publisher_name==toDeleteName).all()
         for game in games:
@@ -904,21 +1130,28 @@ def handleDelete(obj_name, obj_class):
     session.commit()
     flash('"%s" has been deleted.' % toDeleteName)
     return redirect('/main/'+obj_class.__tablename__+'s')
-
-# Use bleach on user input. Is this a good idea?
-# I tried doing injection/script attacks but SQLAlchemy OR Flask seems to have
-# handled them without a problem.    
+  
 def rqClean(name):
+    """Request and sanitize input from html forms."""
     return bleach.clean(request.form[name])
     
 # Oauth Helper Functions
 def createUser(email):
+    """Creates a user in the DB with the user's email address.
+    
+    Argument:
+        email: a string containing the email address of the new user.
+        
+    Return:
+        Does not return anything. Commits transaction to the database.
+    """
     newUser = User(name=login_session['username'], email=email)
     session.add(newUser)
     session.commit()
     #user = session.query(User).filter_by(email=login_session['email']).one()
     
 def checkEmail(email):
+    """Checks if the user email exists in the database."""
     try:
         user = session.query(User).filter_by(email=email).one()
         return user.email
