@@ -474,27 +474,28 @@ li.items{
   }
   
   .col-RD{
-    width: 10%
+    width: 10%;
   }
   
   .col-Genre{
-    width: 15%
+    width: 15%;
+    text-align: center;
   }
   
   .col-Pub{
-    width: 17.5%
+    width: 17.5%;
   }
   
   .col-Rating{
-    width: 5%
+    width: 5%;
   }
   
   .col-MV{
-    width: 10%
+    width: 10%;
   }
   
   .col-MVD{
-    width: 10%
+    width: 10%;
   }
   
 }
@@ -567,15 +568,15 @@ li.items{
   }
   
   .col-Genre{
-    width: 15%
+    width: 15%;
   }
   
   .col-Pub{
-    width: 25%
+    width: 25%;
   }
   
   .col-Rating{
-    width: 10%
+    width: 10%;
   }
   
   .col-MV{
@@ -655,7 +656,7 @@ li.items{
   }
   
   .col-Genre{
-    width: 25%
+    width: 25%;
   }
   
   .col-Pub{
@@ -663,7 +664,7 @@ li.items{
   }
   
   .col-Rating{
-    width: 10%
+    width: 10%;
   }
   
   .col-MV{
