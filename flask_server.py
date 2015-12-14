@@ -348,7 +348,7 @@ def viewGenres():
             return 'hehehe'
             
         if checkAuthor(rqClean('name'), Genre): # checks if user is authorized to make changes
-            return redirect('/main/'+Genre.__tablename__+'s/')
+            return redirect('/main/'+Genre.__tablename__+'s')
             
         return handleDelete(rqClean('name'), Genre)
 
@@ -369,7 +369,7 @@ def viewPublishers():
             return 'hehehe'
             
         if checkAuthor(rqClean('name'), Publisher): # checks if user is authorized to make changes
-            return redirect('/main/'+Publisher.__tablename__+'s/')        
+            return redirect('/main/'+Publisher.__tablename__+'s')        
         
         return handleDelete(request.form['name'], Publisher)
         
@@ -820,65 +820,67 @@ def listSuperUsers():
         superusers[i] = str(superusers[i][0])
     return superusers
 
-def checkAuthor(response, obj):
+def checkAuthor(obj_name, obj_class):
     """Handles authorization DB-alterting actions.
     
     Args:
-        response: name(string) of genre, publisher, or game to delete
-        obj: Genre, Publisher, or Game
+        obj_name: name(string) of genre, publisher, or game to delete
+        obj_class: Genre, Publisher, or Game
     
     Returns:
     
     """
-    toDeleteName = response
+    toDeleteName = obj_name
     superUsers = listSuperUsers()
     
-    email = session.query(obj).filter(obj.user_email==login_session['email']).first()
+    creator_email = session.query(obj_class).filter(obj_class.name==toDeleteName).first().user_email
+    print creator_email
+    checkSuper = (login_session['email'] in superUsers) # if True, user IS authorized
     
-    loggedIn = login_session['email'] != obj.user_email # if True, user is not authorized
-    checkSuper = login_session['email'] not in superUsers # if True, user is not authorized
-    if loggedIn and checkSuper: # checks authority of user to make a change
-        flash('You are not the creator of this %s, you may not delete it.' % obj.__tablename__)
-        return True
-    return False
+    
+    # checks authority of user to make a change
+    if login_session['email'] == creator_email or checkSuper: 
+        return False # user is authorized to make change
+    flash('You are not the creator of this %s, you may not edit/delete it.' % obj_class.__tablename__)
+    return True # user is NOT authorized to make change
 
     
-def handleDelete(response, obj):
+def handleDelete(obj_name, obj_class):
     """Handles a delete request for genre pages and publisher pages. 
     
     Args:
-        response: name(string) of genre or publisher to delete
-        obj: either Genre or Publisher
+        obj_name: name(string) of genre or publisher to delete
+        obj_class: either Genre or Publisher
     
     Return:
         Carries out request and commits transaction to database. Redirects user
         to genre or publisher page.
     """
-    toDeleteName = response
+    toDeleteName = obj_name
     superUsers = listSuperUsers()
 
     if toDeleteName == 'Other':
         flash('You cannot delete "Other."')
-        return redirect('/main/'+obj.__tablename__+'s/'+toDeleteName)    
+        return redirect('/main/'+obj_class.__tablename__+'s/'+toDeleteName)    
 
-    if obj.__tablename__ == 'publisher':
+    if obj_class.__tablename__ == 'publisher':
         games = session.query(Game).filter(Game.publisher_name==toDeleteName).all()
         for game in games:
             game.publisher_name = "Other"
             session.add(game)
             session.commit()
-    elif obj.__tablename__ == 'genre':
+    elif obj_class.__tablename__ == 'genre':
         games = session.query(Game).filter(Game.genre_name==toDeleteName).all()
         for game in games:
             game.genre_name = "Other"
             session.add(game)
             session.commit()
             
-    toDelete = session.query(obj).filter(obj.name==toDeleteName).all()[0]
+    toDelete = session.query(obj_class).filter(obj_class.name==toDeleteName).all()[0]
     session.delete(toDelete)
     session.commit()
     flash('"%s" has been deleted.' % toDeleteName)
-    return redirect('/main/'+obj.__tablename__+'s')
+    return redirect('/main/'+obj_class.__tablename__+'s')
 
 # Use bleach on user input. Is this a good idea?
 # I tried doing injection/script attacks but SQLAlchemy OR Flask seems to have
