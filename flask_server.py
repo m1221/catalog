@@ -251,14 +251,9 @@ def viewGamePage(game_name):
         # attacks
         if login_session['state'] != request.form['CSRFToken']:
             return 'hehehe'
-        superUsers = listSuperUsers()
-        # if user is not creator of page OR a superuser, deny post request and
-        # redirect to game page.
-        loggedIn = login_session['email'] != game.user_email
-        checkSuper = login_session['email'] not in superUsers
-        if loggedIn and checkSuper: # checks authority of user to edit page
-            flash('You are not the creator of this game page. You shall NOT edit it.')
-            return redirect(url_for('viewGamePage', game_name=game_name))
+            
+        if checkAuthor(game_name, Game):
+            return redirect('/main/'+Game.__tablename__+'s/'+game_name)
             
         if request.form['button'] == 'Delete Game':
             name = game.name
@@ -292,7 +287,11 @@ def viewGenrePage(genre_name):
     if request.method == 'POST':
         # prevents CSRF?
         if login_session['state'] != request.form['CSRFToken']:
-            return 'hehehe'     
+            return 'hehehe'
+
+        if checkAuthor(genre_name, Genre): # checks if user is authorized to make changes
+            return redirect('/main/'+Genre.__tablename__+'s/'+genre_name)
+            
         if request.form['button'] == 'Delete Genre':
             return handleDelete(genre.name, Genre)
     
@@ -324,6 +323,10 @@ def viewPubPage(pub_name):
     if request.method == 'POST':
         if login_session['state'] != request.form['CSRFToken']:
             return 'hehehe'
+            
+        if checkAuthor(pub_name, Publisher): # checks if user is authorized to make changes
+            return redirect('/main/'+Publisher.__tablename__+'s/'+pub_name)
+            
         if request.form['button'] == 'Delete Publisher':
             return handleDelete(publisher.name, Publisher)
         
@@ -336,13 +339,17 @@ def viewPubPage(pub_name):
 def viewGenres():
     genre_names = listNames(Genre) 
     
-    # renders the publish version of this page
+    # renders the public version of this page
     if 'username' not in login_session:
         return render_template('view_genres.html', genre_names=genre_names) 
         
     if request.method == 'POST':
         if login_session['state'] != request.form['CSRFToken']:
             return 'hehehe'
+            
+        if checkAuthor(rqClean('name'), Genre): # checks if user is authorized to make changes
+            return redirect('/main/'+Genre.__tablename__+'s/')
+            
         return handleDelete(rqClean('name'), Genre)
 
     return render_template('view_genres.html', genre_names=genre_names,
@@ -360,6 +367,10 @@ def viewPublishers():
     if request.method == 'POST':
         if login_session['state'] != request.form['CSRFToken']:
             return 'hehehe'
+            
+        if checkAuthor(rqClean('name'), Publisher): # checks if user is authorized to make changes
+            return redirect('/main/'+Publisher.__tablename__+'s/')        
+        
         return handleDelete(request.form['name'], Publisher)
         
     return render_template('view_publishers.html', pub_names=pub_names,
@@ -372,14 +383,9 @@ def editGame(game_name):
         return redirect('/login')
   
     game = session.query(Game).filter(Game.name==game_name).one()
-    superUsers = listSuperUsers()
     
-    loggedIn = login_session['email'] != game.user_email
-    checkSuper = login_session['email'] not in superUsers
-    if loggedIn and checkSuper: # checks authority of user to commit change
-        flash('You are not the creator of this game page. You shall NOT edit'
-              'it.')
-        return redirect(url_for('viewGamePage', game_name=game_name))
+    if checkAuthor(game_name, Game): # checks if user is authorized to make changes
+            return redirect('/main/'+Game.__tablename__+'s/'+game_name)
   
     if request.method == 'POST':
         # prevents CSRF ?
@@ -451,7 +457,9 @@ def editPublisher(pub_name):
         return redirect('/login')
     
     publisher = session.query(Publisher).filter(Publisher.name==pub_name).one()
-    superUsers = listSuperUsers()
+    
+    if checkAuthor(pub_name, Publisher): # checks if user is authorized to make changes
+        return redirect('/main/'+Publisher.__tablename__+'s/'+pub_name)
     
     if request.method == 'POST':
         if login_session['state'] != request.form['CSRFToken']:
@@ -504,14 +512,9 @@ def editGenre(genre_name):
         return redirect('/login')
     
     genre = session.query(Genre).filter(Genre.name==genre_name).one()
-    superUsers = listSuperUsers()
-    loggedIn = login_session['email'] != game.user_email
-    checkSuper = login_session['email'] not in superUsers
-    # checks authority of user to commit change
-    if loggedIn and checkSuper:
-        flash('You are not the creator of this game page. You shall NOT edit'
-              'it.')
-        return redirect(url_for('viewGamePage', game_name=game_name))
+    
+    if checkAuthor(genre_name, Genre): # checks if user is authorized to make changes
+            return redirect('/main/'+Genre.__tablename__+'s/'+genre_name)
     
     if request.method == 'POST':
         # prevents CSRF ?
@@ -638,8 +641,9 @@ def newGame():
     if request.method == 'POST':
         if login_session['state'] != request.form['CSRFToken']:
             return 'hehehe'
-        name, rating, genre_name, publisher_name, release_date, market_value,
-        mv_date, description = '','','','', None,'', None,''
+        name, rating, genre_name, publisher_name = '', '', '', ''
+        release_date, market_value, mv_date = None, '', None
+        description = ''
         game_names = listNames(Game)
         
         # check if user sent request with blank field for game name
@@ -815,6 +819,29 @@ def listSuperUsers():
     for i in range(0,len(superusers)):
         superusers[i] = str(superusers[i][0])
     return superusers
+
+def checkAuthor(response, obj):
+    """Handles authorization DB-alterting actions.
+    
+    Args:
+        response: name(string) of genre, publisher, or game to delete
+        obj: Genre, Publisher, or Game
+    
+    Returns:
+    
+    """
+    toDeleteName = response
+    superUsers = listSuperUsers()
+    
+    email = session.query(obj).filter(obj.user_email==login_session['email']).first()
+    
+    loggedIn = login_session['email'] != obj.user_email # if True, user is not authorized
+    checkSuper = login_session['email'] not in superUsers # if True, user is not authorized
+    if loggedIn and checkSuper: # checks authority of user to make a change
+        flash('You are not the creator of this %s, you may not delete it.' % obj.__tablename__)
+        return True
+    return False
+
     
 def handleDelete(response, obj):
     """Handles a delete request for genre pages and publisher pages. 
@@ -832,15 +859,7 @@ def handleDelete(response, obj):
 
     if toDeleteName == 'Other':
         flash('You cannot delete "Other."')
-        return redirect('/main/'+obj.__tablename__+'s/'+toDeleteName)
-        
-    email = session.query(obj).filter(obj.user_email==login_session['email']).first()
-    
-    loggedIn = login_session['email'] != game.user_email
-    checkSuper = login_session['email'] not in superUsers
-    if loggedIn and checkSuper: # checks authority of user to commit change
-        flash('You are not the creator of this %s, you may not delete it.' % obj.__tablename__)
-        return redirect('/main/'+obj.__tablename__+'s/'+toDeleteName)
+        return redirect('/main/'+obj.__tablename__+'s/'+toDeleteName)    
 
     if obj.__tablename__ == 'publisher':
         games = session.query(Game).filter(Game.publisher_name==toDeleteName).all()
