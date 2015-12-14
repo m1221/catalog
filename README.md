@@ -27,6 +27,7 @@ GitHub: m1221
   `$python icgdb_database_setup.py`
 1. Populate the database
   `$python db_populate.py`
+  * before running db_populate.py, read lines ~28-34 regarding the use of a 'superuser'
 1. Serve the application
   ~$python flask_server.py`
 1. Open your browser and access the page via localhost:5000/ 
