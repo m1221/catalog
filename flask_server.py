@@ -26,6 +26,7 @@ app = Flask(__name__)
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.sql import text
 from icgdb_database_setup import Base, Game, Publisher, Genre, User
 
 # Oauth Imports
@@ -476,6 +477,7 @@ def editPublisher(pub_name):
                 flash('Name already taken! "%s" NOT created!' % name)
                 return redirect('#')
             else:
+                old_name = publisher.name
                 publisher.name=name
         
         publisher_descrip = rqClean('description')
@@ -487,7 +489,17 @@ def editPublisher(pub_name):
             session.add(publisher)
             session.commit()
             flash('Publisher successfully edited.')
-            return redirect(url_for('editPublisher', pub_name=publisher.name))
+            
+            # update game tables to reflect name change
+            if name:
+                conn = engine.connect()
+                stmt = text("UPDATE game "
+                        "SET publisher_name='%s' "
+                        "WHERE publisher_name='%s'" % (name, old_name))
+                result = conn.execute(stmt)
+                result.close()
+            
+            return redirect(url_for('viewPubPage', pub_name=publisher.name))
         else:
             flash('No changes saved.')
             return redirect(url_for('editPublisher', pub_name=publisher.name))
@@ -532,6 +544,7 @@ def editGenre(genre_name):
                 flash('Name already taken! "%s" NOT created!' % name)
                 return redirect('/main/newgenre')
             else:
+                old_name = genre.name
                 genre.name = name
         
         genre_descrip = rqClean('description')
@@ -542,6 +555,16 @@ def editGenre(genre_name):
             session.add(genre)
             session.commit()
             flash('Genre successfully edited.')
+            
+            # update game table to reflect name change
+            if name:
+                conn = engine.connect()
+                stmt = text("UPDATE game "
+                        "SET genre_name='%s' "
+                        "WHERE genre_name='%s'" % (name, old_name))
+                result = conn.execute(stmt)
+                result.close()
+            
             return redirect(url_for('viewGenrePage', genre_name=genre.name))
         else:
             flash('No changes saved.')
