@@ -45,8 +45,8 @@ import requests
 
 # Security Imports
 import bleach # to sanitize user text input
-from werkzeug import secure_filename # to sanitize user file upload
-from flask.ext.seasurf import SeaSurf
+from werkzeug.utils import secure_filename # to sanitize user file upload
+from flask_seasurf import SeaSurf
 
 # XML endpoint import
 import xml.etree.ElementTree as ET
@@ -169,7 +169,7 @@ def gconnect():
     output += login_session['picture']
     output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
     flash("You are now logged in as %s." % login_session['username'])
-    print "done!"
+    print("done!")
     return output
     
 @csrf.exempt
@@ -1049,7 +1049,7 @@ def checkAuthor(obj_name, obj_class):
     superUsers = listSuperUsers()
     
     creator_email = session.query(obj_class).filter(obj_class.name==toDeleteName).first().user_email
-    print creator_email
+    print(creator_email)
     checkSuper = (login_session['email'] in superUsers) # if True, user IS authorized
     
     

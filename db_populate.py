@@ -277,4 +277,4 @@ for game in games:
     session.commit()
 
   
-print 'Reached end of file! Database successfully populated!'
+print('Reached end of file! Database successfully populated!')
